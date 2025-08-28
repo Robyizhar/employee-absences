@@ -6,17 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('companies', function (Blueprint $table) {
+        Schema::create('machines', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
-            $table->string('code')->nullable();
-            $table->string('address')->nullable();
+            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->string('serial_number');
+            $table->string('trans_id');
+            $table->string('location');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
+
+            $table->unique(['company_id', 'serial_number']);
+            $table->unique(['company_id', 'trans_id']);
         });
     }
 
     public function down(): void {
-        Schema::dropIfExists('companies');
+        Schema::dropIfExists('machines');
     }
 };
