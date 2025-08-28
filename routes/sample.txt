@@ -1,0 +1,604 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+// BASE
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\ClearController;
+
+// MASTER DATA
+use App\Http\Controllers\Admin\Master\BannerController;
+use App\Http\Controllers\Admin\Master\NewsCategoryController;
+use App\Http\Controllers\Admin\Master\NewsController;
+use App\Http\Controllers\Admin\Master\PagesController;
+use App\Http\Controllers\Admin\Master\ContactController;
+use App\Http\Controllers\Admin\Master\UserController;
+use App\Http\Controllers\Admin\Master\RoleController;
+use App\Http\Controllers\Admin\Master\PermissionController;
+use App\Http\Controllers\Admin\Master\SettingController;
+use App\Http\Controllers\Admin\Master\PrestasiCategoryController;
+use App\Http\Controllers\Admin\Master\PrestasiController;
+use App\Http\Controllers\Admin\Master\AnnouncementController;
+use App\Http\Controllers\Admin\Master\LinkController;
+use App\Http\Controllers\Admin\Master\AgendaController;
+use App\Http\Controllers\Admin\Master\GalleryController;
+use App\Http\Controllers\Admin\Master\MenuManagementController;
+use App\Http\Controllers\Admin\Master\WargaSekolahSiswaController;
+use App\Http\Controllers\Admin\Master\WargaSekolahAlumniController;
+use App\Http\Controllers\Admin\Master\WargaSekolahPTKController;
+use App\Http\Controllers\Admin\Master\JejakPendapatController;
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::group(['middleware' => ['role_or_permission:Maintener|Refresh']], function () {
+
+        Route::prefix('clear')->group(function () {
+
+            Route::get('/all', [ClearController::class, 'clearOptimize'])->name('clear.all');
+            Route::get('/config', [ClearController::class, 'clearConfig'])->name('clear.config');
+            Route::get('/cache', [ClearController::class, 'clearCache'])->name('clear.cache');
+            Route::get('/storage-link', [ClearController::class, 'storageLinked'])->name('storage.link');
+            Route::get('/migrate', [ClearController::class, 'migrate'])->name('migrate');
+            Route::get('/seed', [ClearController::class, 'seeder'])->name('seed');
+
+        });
+    });
+
+    Route::prefix('back')->group(function () {
+
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        Route::prefix('banner')->group(function () {
+
+            Route::get('/', [BannerController::class, 'index'])->name('banner.index')
+                ->middleware(['role_or_permission:Maintener|View-Banner']);
+
+            Route::post('/get-data', [BannerController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Banner']);
+
+            Route::get('/create', [BannerController::class, 'create'])->name('banner.create')
+                ->middleware(['role_or_permission:Maintener|Add-Banner']);
+
+            Route::get('/show/{id}', [BannerController::class, 'show'])->name('banner.show')
+                ->middleware(['role_or_permission:Maintener|View-Banner']);
+
+            Route::get('/edit/{id}', [BannerController::class, 'edit'])->name('banner.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Banner']);
+
+            Route::post('/store', [BannerController::class, 'store'])->name('banner.store')
+                ->middleware(['role_or_permission:Maintener|Add-Banner']);
+
+            Route::put('/update', [BannerController::class, 'update'])->name('banner.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Banner']);
+
+            Route::get('/destroy/{id}', [BannerController::class, 'destroy'])->name('banner.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Banner']);
+
+        });
+
+        Route::prefix('news-category')->group(function () {
+
+            Route::get('/', [NewsCategoryController::class, 'index'])->name('news-category.index')
+                ->middleware(['role_or_permission:Maintener|View-Kategori News']);
+
+            Route::post('/get-data', [NewsCategoryController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Kategori News']);
+
+            Route::get('/create', [NewsCategoryController::class, 'create'])->name('news-category.create')
+                ->middleware(['role_or_permission:Maintener|Add-Kategori News']);
+
+            Route::get('/show/{id}', [NewsCategoryController::class, 'show'])->name('news-category.show')
+                ->middleware(['role_or_permission:Maintener|View-Kategori News']);
+
+            Route::get('/edit/{id}', [NewsCategoryController::class, 'edit'])->name('news-category.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Kategori News']);
+
+            Route::post('/store', [NewsCategoryController::class, 'store'])->name('news-category.store')
+                ->middleware(['role_or_permission:Maintener|Add-Kategori News']);
+
+            Route::put('/update', [NewsCategoryController::class, 'update'])->name('news-category.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Kategori News']);
+
+            Route::get('/destroy/{id}', [NewsCategoryController::class, 'destroy'])->name('news-category.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Kategori News']);
+
+        });
+
+        Route::prefix('news')->group(function () {
+
+            Route::get('/', [NewsController::class, 'index'])->name('news.index')
+                ->middleware(['role_or_permission:Maintener|View-News']);
+
+            Route::post('/get-data', [NewsController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-News']);
+
+            Route::get('/create', [NewsController::class, 'create'])->name('news.create')
+                ->middleware(['role_or_permission:Maintener|Add-News']);
+
+            Route::get('/show/{id}', [NewsController::class, 'show'])->name('news.show')
+                ->middleware(['role_or_permission:Maintener|View-News']);
+
+            Route::get('/edit/{id}', [NewsController::class, 'edit'])->name('news.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-News']);
+
+            Route::post('/store', [NewsController::class, 'store'])->name('news.store')
+                ->middleware(['role_or_permission:Maintener|Add-News']);
+
+            Route::put('/update', [NewsController::class, 'update'])->name('news.update')
+                ->middleware(['role_or_permission:Maintener|Edit-News']);
+
+            Route::get('/destroy/{id}', [NewsController::class, 'destroy'])->name('news.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-News']);
+
+        });
+
+        Route::prefix('pages')->group(function () {
+
+            Route::get('/', [PagesController::class, 'index'])->name('pages.index')
+                ->middleware(['role_or_permission:Maintener|View-Halaman']);
+
+            Route::post('/get-data', [PagesController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Halaman']);
+
+            Route::get('/create', [PagesController::class, 'create'])->name('pages.create')
+                ->middleware(['role_or_permission:Maintener|Add-Halaman']);
+
+            Route::get('/show/{id}', [PagesController::class, 'show'])->name('pages.show')
+                ->middleware(['role_or_permission:Maintener|View-Halaman']);
+
+            Route::get('/edit/{id}', [PagesController::class, 'edit'])->name('pages.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Halaman']);
+
+            Route::post('/store', [PagesController::class, 'store'])->name('pages.store')
+                ->middleware(['role_or_permission:Maintener|Add-Halaman']);
+
+            Route::put('/update', [PagesController::class, 'update'])->name('pages.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Halaman']);
+
+            Route::get('/destroy/{id}', [PagesController::class, 'destroy'])->name('pages.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Halaman']);
+
+        });
+
+        Route::group(['middleware' => ['role_or_permission:Maintener|Kontak Pengunjung']], function () {
+
+            Route::prefix('contact')->group(function () {
+
+                Route::get('/', [ContactController::class, 'index'])->name('contact.index');
+                Route::post('/get-data', [ContactController::class, 'getData']);
+                Route::get('/show/{id}', [ContactController::class, 'show'])->name('contact.show');
+                Route::get('/destroy/{id}', [ContactController::class, 'destroy'])->name('contact.destroy');
+
+            });
+
+        });
+
+        Route::prefix('user')->group(function () {
+
+            Route::get('/', [UserController::class, 'index'])->name('user.index')
+                ->middleware(['role_or_permission:Maintener|View-User']);
+
+            Route::post('/get-data', [UserController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-User']);
+
+            Route::get('/create', [UserController::class, 'create'])->name('user.create')
+                ->middleware(['role_or_permission:Maintener|Add-User']);
+
+            Route::get('/show/{id}', [UserController::class, 'show'])->name('user.show')
+                ->middleware(['role_or_permission:Maintener|View-User']);
+
+            Route::get('/edit/{id}', [UserController::class, 'edit'])->name('user.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-User']);
+
+            Route::post('/store', [UserController::class, 'store'])->name('user.store')
+                ->middleware(['role_or_permission:Maintener|Add-User']);
+
+            Route::put('/update', [UserController::class, 'update'])->name('user.update')
+                ->middleware(['role_or_permission:Maintener|Edit-User']);
+
+            Route::get('/destroy/{id}', [UserController::class, 'destroy'])->name('user.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-User']);
+
+        });
+
+        Route::prefix('role')->group(function () {
+
+            Route::get('/', [RoleController::class, 'index'])->name('role.index')
+                ->middleware(['role_or_permission:Maintener|View-User Group']);
+
+            Route::post('/get-data', [RoleController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-User Group']);
+
+            Route::get('/create', [RoleController::class, 'create'])->name('role.create')
+                ->middleware(['role_or_permission:Maintener|Add-User Group']);
+
+            Route::get('/show/{id}', [RoleController::class, 'show'])->name('role.show')
+                ->middleware(['role_or_permission:Maintener|View-User Group']);
+
+            Route::get('/edit/{id}', [RoleController::class, 'edit'])->name('role.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-User Group']);
+
+            Route::post('/store', [RoleController::class, 'store'])->name('role.store')
+                ->middleware(['role_or_permission:Maintener|Add-User Group']);
+
+            Route::put('/update', [RoleController::class, 'update'])->name('role.update')
+                ->middleware(['role_or_permission:Maintener|Edit-User Group']);
+
+            Route::get('/destroy/{id}', [RoleController::class, 'destroy'])->name('role.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-User Group']);
+
+        });
+
+        Route::group(['middleware' => ['role:Maintener']], function () {
+
+            Route::prefix('permission')->group(function () {
+
+                Route::get('/', [PermissionController::class, 'index'])->name('permission.index');
+                Route::post('/get-data', [PermissionController::class, 'getData']);
+                Route::get('/create', [PermissionController::class, 'create'])->name('permission.create');
+                Route::get('/show/{id}', [PermissionController::class, 'show'])->name('permission.show');
+                Route::get('/edit/{id}', [PermissionController::class, 'edit'])->name('permission.edit');
+                Route::post('/store', [PermissionController::class, 'store'])->name('permission.store');
+                Route::put('/update', [PermissionController::class, 'update'])->name('permission.update');
+                Route::get('/destroy/{id}', [PermissionController::class, 'destroy'])->name('permission.destroy');
+
+            });
+
+        });
+
+        Route::group(['middleware' => ['role_or_permission:Maintener|Setting']], function () {
+
+            Route::prefix('setting')->group(function () {
+
+                Route::get('/', [SettingController::class, 'edit'])->name('setting.edit');
+                Route::put('/update', [SettingController::class, 'update'])->name('setting.update');
+                Route::get('/edit-smtp', [SettingController::class, 'editSMTP'])->name('setting.edit-smtp');
+                Route::put('/updateSMTP', [SettingController::class, 'updateSMTP'])->name('setting.update-smtp');
+
+            });
+
+        });
+
+        Route::group(['middleware' => ['role_or_permission:Maintener|Sambutan']], function () {
+
+            Route::prefix('sambutan')->group(function () {
+
+                Route::get('/', [SettingController::class, 'editSambutan'])->name('sambutan.edit');
+                Route::put('/update', [SettingController::class, 'updateSambutan'])->name('sambutan.update');
+
+            });
+
+        });
+
+        Route::prefix('prestasi-category')->group(function () {
+
+            Route::get('/', [PrestasiCategoryController::class, 'index'])->name('prestasi-category.index')
+                ->middleware(['role_or_permission:Maintener|View-Kategori Prestasi']);
+
+            Route::post('/get-data', [PrestasiCategoryController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Kategori Prestasi']);
+
+            Route::get('/create', [PrestasiCategoryController::class, 'create'])->name('prestasi-category.create')
+                ->middleware(['role_or_permission:Maintener|Add-Kategori Prestasi']);
+
+            Route::get('/show/{id}', [PrestasiCategoryController::class, 'show'])->name('prestasi-category.show')
+                ->middleware(['role_or_permission:Maintener|View-Kategori Prestasi']);
+
+            Route::get('/edit/{id}', [PrestasiCategoryController::class, 'edit'])->name('prestasi-category.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Kategori Prestasi']);
+
+            Route::post('/store', [PrestasiCategoryController::class, 'store'])->name('prestasi-category.store')
+                ->middleware(['role_or_permission:Maintener|Add-Kategori Prestasi']);
+
+            Route::put('/update', [PrestasiCategoryController::class, 'update'])->name('prestasi-category.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Kategori Prestasi']);
+
+            Route::get('/destroy/{id}', [PrestasiCategoryController::class, 'destroy'])->name('prestasi-category.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Kategori Prestasi']);
+
+        });
+
+        Route::prefix('prestasi')->group(function () {
+
+            Route::get('/', [PrestasiController::class, 'index'])->name('prestasi.index')
+                ->middleware(['role_or_permission:Maintener|View-Prestasi']);
+
+            Route::post('/get-data', [PrestasiController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Prestasi']);
+
+            Route::get('/create', [PrestasiController::class, 'create'])->name('prestasi.create')
+                ->middleware(['role_or_permission:Maintener|Add-Prestasi']);
+
+            Route::get('/show/{id}', [PrestasiController::class, 'show'])->name('prestasi.show')
+                ->middleware(['role_or_permission:Maintener|View-Prestasi']);
+
+            Route::get('/edit/{id}', [PrestasiController::class, 'edit'])->name('prestasi.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Prestasi']);
+
+            Route::post('/store', [PrestasiController::class, 'store'])->name('prestasi.store')
+                ->middleware(['role_or_permission:Maintener|Add-Prestasi']);
+
+            Route::put('/update', [PrestasiController::class, 'update'])->name('prestasi.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Prestasi']);
+
+            Route::get('/destroy/{id}', [PrestasiController::class, 'destroy'])->name('prestasi.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Prestasi']);
+
+        });
+
+        Route::prefix('announcement')->group(function () {
+
+            Route::get('/', [AnnouncementController::class, 'index'])->name('announcement.index')
+                ->middleware(['role_or_permission:Maintener|View-Pengumuman']);
+
+            Route::post('/get-data', [AnnouncementController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Pengumuman']);
+
+            Route::get('/create', [AnnouncementController::class, 'create'])->name('announcement.create')
+                ->middleware(['role_or_permission:Maintener|Add-Pengumuman']);
+
+            Route::get('/show/{id}', [AnnouncementController::class, 'show'])->name('announcement.show')
+                ->middleware(['role_or_permission:Maintener|View-Pengumuman']);
+
+            Route::get('/edit/{id}', [AnnouncementController::class, 'edit'])->name('announcement.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Pengumuman']);
+
+            Route::post('/store', [AnnouncementController::class, 'store'])->name('announcement.store')
+                ->middleware(['role_or_permission:Maintener|Add-Pengumuman']);
+
+            Route::put('/update', [AnnouncementController::class, 'update'])->name('announcement.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Pengumuman']);
+
+            Route::get('/destroy/{id}', [AnnouncementController::class, 'destroy'])->name('announcement.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Pengumuman']);
+
+        });
+
+        Route::prefix('link')->group(function () {
+
+            Route::get('/', [LinkController::class, 'index'])->name('link.index')
+                ->middleware(['role_or_permission:Maintener|View-Tautan']);
+
+            Route::post('/get-data', [LinkController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Tautan']);
+
+            Route::get('/create', [LinkController::class, 'create'])->name('link.create')
+                ->middleware(['role_or_permission:Maintener|Add-Tautan']);
+
+            Route::get('/show/{id}', [LinkController::class, 'show'])->name('link.show')
+                ->middleware(['role_or_permission:Maintener|View-Tautan']);
+
+            Route::get('/edit/{id}', [LinkController::class, 'edit'])->name('link.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Tautan']);
+
+            Route::post('/store', [LinkController::class, 'store'])->name('link.store')
+                ->middleware(['role_or_permission:Maintener|Add-Tautan']);
+
+            Route::put('/update', [LinkController::class, 'update'])->name('link.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Tautan']);
+
+            Route::get('/destroy/{id}', [LinkController::class, 'destroy'])->name('link.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Tautan']);
+
+        });
+
+        Route::prefix('agenda')->group(function () {
+
+            Route::get('/', [AgendaController::class, 'index'])->name('agenda.index')
+                ->middleware(['role_or_permission:Maintener|View-Agenda']);
+
+            Route::post('/get-data', [AgendaController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Agenda']);
+
+            Route::get('/create', [AgendaController::class, 'create'])->name('agenda.create')
+                ->middleware(['role_or_permission:Maintener|Add-Agenda']);
+
+            Route::get('/show/{id}', [AgendaController::class, 'show'])->name('agenda.show')
+                ->middleware(['role_or_permission:Maintener|View-Agenda']);
+
+            Route::get('/edit/{id}', [AgendaController::class, 'edit'])->name('agenda.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Agenda']);
+
+            Route::post('/store', [AgendaController::class, 'store'])->name('agenda.store')
+                ->middleware(['role_or_permission:Maintener|Add-Agenda']);
+
+            Route::put('/update', [AgendaController::class, 'update'])->name('agenda.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Agenda']);
+
+            Route::get('/destroy/{id}', [AgendaController::class, 'destroy'])->name('agenda.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Agenda']);
+
+
+        });
+
+        Route::prefix('gallery')->group(function () {
+
+            Route::get('/', [GalleryController::class, 'index'])->name('gallery.index')
+                ->middleware(['role_or_permission:Maintener|View-Gallery']);
+
+            Route::post('/get-data', [GalleryController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Gallery']);
+
+            Route::get('/create', [GalleryController::class, 'create'])->name('gallery.create')
+                ->middleware(['role_or_permission:Maintener|Add-Gallery']);
+
+            Route::get('/show/{id}', [GalleryController::class, 'show'])->name('gallery.show')
+                ->middleware(['role_or_permission:Maintener|View-Gallery']);
+
+            Route::get('/edit/{id}', [GalleryController::class, 'edit'])->name('gallery.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Gallery']);
+
+            Route::post('/store', [GalleryController::class, 'store'])->name('gallery.store')
+                ->middleware(['role_or_permission:Maintener|Add-Gallery']);
+
+            Route::put('/update', [GalleryController::class, 'update'])->name('gallery.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Gallery']);
+
+            Route::get('/destroy/{id}', [GalleryController::class, 'destroy'])->name('gallery.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Gallery']);
+
+
+        });
+
+        Route::prefix('menu-management')->group(function () {
+
+            Route::get('/', [MenuManagementController::class, 'index'])->name('menu-management.index')
+                ->middleware(['role_or_permission:Maintener|View-Management Menu']);
+
+            Route::post('/get-data', [MenuManagementController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Management Menu']);
+
+            Route::get('/create', [MenuManagementController::class, 'create'])->name('menu-management.create')
+                ->middleware(['role_or_permission:Maintener|Add-Management Menu']);
+
+            Route::get('/show', [MenuManagementController::class, 'show'])->name('menu-management.show')
+                ->middleware(['role_or_permission:Maintener|View-Management Menu']);
+
+            Route::get('/edit/{id}', [MenuManagementController::class, 'edit'])->name('menu-management.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Management Menu']);
+
+            Route::post('/store', [MenuManagementController::class, 'store'])->name('menu-management.store')
+                ->middleware(['role_or_permission:Maintener|Add-Management Menu']);
+
+            Route::put('/update', [MenuManagementController::class, 'update'])->name('menu-management.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Management Menu']);
+
+            Route::get('/destroy/{id}', [MenuManagementController::class, 'destroy'])->name('menu-management.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Management Menu']);
+
+
+        });
+
+        Route::prefix('warga-sekolah-siswa')->group(function () {
+
+            Route::get('/', [WargaSekolahSiswaController::class, 'index'])->name('warga-sekolah-siswa.index')
+                ->middleware(['role_or_permission:Maintener|View-Warga Sekolah Siswa']);
+
+            Route::post('/get-data', [WargaSekolahSiswaController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Warga Sekolah Siswa']);
+
+            Route::get('/create', [WargaSekolahSiswaController::class, 'create'])->name('warga-sekolah-siswa.create')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah Siswa']);
+
+            Route::get('/import', [WargaSekolahSiswaController::class, 'import'])->name('warga-sekolah-siswa.import')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah Siswa']);
+
+            Route::post('/do-import', [WargaSekolahSiswaController::class, 'doImport'])->name('warga-sekolah-siswa.do-import')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah Siswa']);
+
+            Route::get('/edit/{id}', [WargaSekolahSiswaController::class, 'edit'])->name('warga-sekolah-siswa.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Warga Sekolah Siswa']);
+
+            Route::post('/store', [WargaSekolahSiswaController::class, 'store'])->name('warga-sekolah-siswa.store')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah Siswa']);
+
+            Route::put('/update', [WargaSekolahSiswaController::class, 'update'])->name('warga-sekolah-siswa.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Warga Sekolah Siswa']);
+
+            Route::get('/destroy/{id}', [WargaSekolahSiswaController::class, 'destroy'])->name('warga-sekolah-siswa.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Warga Sekolah Siswa']);
+
+        });
+
+        Route::prefix('warga-sekolah-alumni')->group(function () {
+
+            Route::get('/', [WargaSekolahAlumniController::class, 'index'])->name('warga-sekolah-alumni.index')
+                ->middleware(['role_or_permission:Maintener|View-Warga Sekolah Alumni']);
+
+            Route::post('/get-data', [WargaSekolahAlumniController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Warga Sekolah Alumni']);
+
+            Route::get('/create', [WargaSekolahAlumniController::class, 'create'])->name('warga-sekolah-alumni.create')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah Alumni']);
+
+            Route::get('/import', [WargaSekolahAlumniController::class, 'import'])->name('warga-sekolah-alumni.import')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah Alumni']);
+
+            Route::post('/do-import', [WargaSekolahAlumniController::class, 'doImport'])->name('warga-sekolah-alumni.do-import')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah Alumni']);
+
+            Route::get('/edit/{id}', [WargaSekolahAlumniController::class, 'edit'])->name('warga-sekolah-alumni.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Warga Sekolah Alumni']);
+
+            Route::post('/store', [WargaSekolahAlumniController::class, 'store'])->name('warga-sekolah-alumni.store')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah Alumni']);
+
+            Route::put('/update', [WargaSekolahAlumniController::class, 'update'])->name('warga-sekolah-alumni.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Warga Sekolah Alumni']);
+
+            Route::get('/destroy/{id}', [WargaSekolahAlumniController::class, 'destroy'])->name('warga-sekolah-alumni.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Warga Sekolah Alumni']);
+
+
+        });
+
+        Route::prefix('warga-sekolah-ptk')->group(function () {
+
+            Route::get('/', [WargaSekolahPTKController::class, 'index'])->name('warga-sekolah-ptk.index')
+                ->middleware(['role_or_permission:Maintener|View-Warga Sekolah PTK']);
+
+            Route::post('/get-data', [WargaSekolahPTKController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Warga Sekolah PTK']);
+
+            Route::get('/create', [WargaSekolahPTKController::class, 'create'])->name('warga-sekolah-ptk.create')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah PTK']);
+
+            Route::get('/import', [WargaSekolahPTKController::class, 'import'])->name('warga-sekolah-ptk.import')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah PTK']);
+
+            Route::post('/do-import', [WargaSekolahPTKController::class, 'doImport'])->name('warga-sekolah-ptk.do-import')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah PTK']);
+
+            Route::get('/edit/{id}', [WargaSekolahPTKController::class, 'edit'])->name('warga-sekolah-ptk.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Warga Sekolah PTK']);
+
+            Route::post('/store', [WargaSekolahPTKController::class, 'store'])->name('warga-sekolah-ptk.store')
+                ->middleware(['role_or_permission:Maintener|Add-Warga Sekolah PTK']);
+
+            Route::put('/update', [WargaSekolahPTKController::class, 'update'])->name('warga-sekolah-ptk.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Warga Sekolah PTK']);
+
+            Route::get('/destroy/{id}', [WargaSekolahPTKController::class, 'destroy'])->name('warga-sekolah-ptk.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Warga Sekolah PTK']);
+
+
+        });
+
+        Route::prefix('jejak-pendapat')->group(function () {
+
+            Route::get('/', [JejakPendapatController::class, 'index'])->name('jejak-pendapat.index')
+                ->middleware(['role_or_permission:Maintener|View-Jejak Pendapat']);
+
+            Route::post('/get-data', [JejakPendapatController::class, 'getData'])
+                ->middleware(['role_or_permission:Maintener|View-Jejak Pendapat']);
+
+            Route::get('/create', [JejakPendapatController::class, 'create'])->name('jejak-pendapat.create')
+                ->middleware(['role_or_permission:Maintener|Add-Jejak Pendapat']);
+
+            Route::get('/edit/{id}', [JejakPendapatController::class, 'edit'])->name('jejak-pendapat.edit')
+                ->middleware(['role_or_permission:Maintener|Edit-Jejak Pendapat']);
+
+            Route::get('/show/{id}', [JejakPendapatController::class, 'show'])->name('jejak-pendapat.show')
+                ->middleware(['role_or_permission:Maintener|View-Jejak Pendapat']);
+
+            Route::post('/store', [JejakPendapatController::class, 'store'])->name('jejak-pendapat.store')
+                ->middleware(['role_or_permission:Maintener|Add-Jejak Pendapat']);
+
+            Route::put('/update', [JejakPendapatController::class, 'update'])->name('jejak-pendapat.update')
+                ->middleware(['role_or_permission:Maintener|Edit-Jejak Pendapat']);
+
+            Route::put('/update-status', [JejakPendapatController::class, 'updateStatus'])->name('jejak-pendapat.update-status')
+                ->middleware(['role_or_permission:Maintener|Edit-Jejak Pendapat']);
+
+            Route::put('/update-answer', [JejakPendapatController::class, 'updateAnswer'])->name('jejak-pendapat.update-answer')
+                ->middleware(['role_or_permission:Maintener|Edit-Jejak Pendapat']);
+
+            Route::get('/destroy/{id}', [JejakPendapatController::class, 'destroy'])->name('jejak-pendapat.destroy')
+                ->middleware(['role_or_permission:Maintener|Delete-Jejak Pendapat']);
+
+
+        });
+
+    });
+
+});
