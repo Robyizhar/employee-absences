@@ -42,12 +42,14 @@
                     <span class="link-title">Employees</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="dashboard.html" class="nav-link">
+            @if (Auth::user()->getRoleNames()[0] == 'Maintener' || Auth::user()->hasAnyPermission(['master_companies']))
+            <li class="nav-item {{ Request::segment(2) == 'company' ? 'active' : '' }}">
+                <a href="{{ url('company') }}" class="nav-link ">
                     <i class="link-icon" data-feather="box"></i>
                     <span class="link-title">Companies</span>
                 </a>
             </li>
+            @endif
         </ul>
     </div>
 </nav>

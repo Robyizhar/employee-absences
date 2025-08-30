@@ -20,4 +20,12 @@
 <!-- Custom js for this page -->
 <script src="../assets/js/dashboard-light.js"></script>
 <script src="../assets/js/datepicker.js"></script>
+
+<script>
+    $('.maintenence').click(function (e) {
+        e.preventDefault();
+        console.log("UNDER MAINTENANCE");
+    });
+</script>
+
 @stack('script')

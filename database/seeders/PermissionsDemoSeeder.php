@@ -28,6 +28,7 @@ class PermissionsDemoSeeder extends Seeder {
         Permission::create(['name' => 'absence_recap', 'guard_name' => 'web' ]);
         Permission::create(['name' => 'setting', 'guard_name' => 'web' ]);
         Permission::create(['name' => 'master_employees', 'guard_name' => 'web' ]);
+        Permission::create(['name' => 'master_companies', 'guard_name' => 'web' ]);
 
         // buat role
         $admin = Role::create(['name' => 'Admin']);
