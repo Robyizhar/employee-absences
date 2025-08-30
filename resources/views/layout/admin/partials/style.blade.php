@@ -1,15 +1,18 @@
-{{-- <link rel="canonical" href="https://preview.keenthemes.com/metronic8" /> --}}
-{{-- <link rel="shortcut icon" href="{{ asset('assets/admin/media/logos/favicon.ico') }}" /> --}}
-<!--begin::Fonts-->
-{{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" /> --}}
-<!--end::Fonts-->
-<!--begin::Page Vendor Stylesheets(used by this page)-->
-<link href="{{ asset('assets/admin/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('assets/admin/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
-<!--end::Page Vendor Stylesheets-->
-<!--begin::Global Stylesheets Bundle(used by all pages)-->
-<link href="{{ asset('assets/admin/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('assets/admin/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
+<!-- core:css -->
+<link rel="stylesheet" href="../assets/vendors/core/core.css">
+<!-- endinject -->
+
+<!-- Plugin css for this page -->
+<link rel="stylesheet" href="../assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+<!-- End plugin css for this page -->
+
+<!-- inject:css -->
+<link rel="stylesheet" href="../assets/fonts/feather-font/css/iconfont.css">
+<link rel="stylesheet" href="../assets/vendors/flag-icon-css/css/flag-icon.min.css">
+<!-- endinject -->
+
+<!-- Layout styles -->
+<link rel="stylesheet" href="../assets/css/demo1/style.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.css"/>
 <!--end::Global Stylesheets Bundle-->
 @stack('style')
