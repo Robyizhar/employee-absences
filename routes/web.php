@@ -24,9 +24,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/list', [CompanyController::class, 'list']);
     });
 
-    // Route::prefix('absence')->group(function () {
-    //     Route::get('/', [AbsenceController::class, 'index'])->name('dashboard');
-    // });
+    Route::prefix('absence')->group(function () {
+        Route::get('/', [AbsenceController::class, 'index'])->name('dashboard');
+    });
 
 });
 
