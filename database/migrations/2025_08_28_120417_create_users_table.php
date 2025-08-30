@@ -8,16 +8,16 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
-            $table->string('username');
-            $table->string('email');
+            $table->foreignId('company_id')
+                ->nullable()
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->string('username')->unique();
+            $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['ADMIN','STAFF','OWNER','DEV']);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
 
-            $table->unique(['company_id', 'username']);
-            $table->unique(['company_id', 'email']);
         });
     }
 
