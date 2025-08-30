@@ -20,3 +20,4 @@
 <!-- Custom js for this page -->
 <script src="../assets/js/dashboard-light.js"></script>
 <script src="../assets/js/datepicker.js"></script>
+@stack('script')
