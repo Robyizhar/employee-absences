@@ -46,10 +46,10 @@ jobs:
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }} # Replace with your server IP or hostname
           SSH_USER: ${{ secrets.SSH_USER }} # Replace with the SSH user
-          REMOTE_DIR: ./employee-absences/ # Directory on the server for your project
+          REMOTE_DIR: ./public_html/ # Directory on the server for your project
         run: |
           ssh -v -o StrictHostKeyChecking=no -o ConnectTimeout=30 -p 22 -i ~/.ssh/id_rsa $SSH_USER@$SSH_HOST << 'EOF'
-            cd employee-absences
+            cd public_html
             git add .
             git commit -m "update from server"
             git pull origin main
