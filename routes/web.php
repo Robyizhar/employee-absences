@@ -12,11 +12,11 @@ Route::get('/', function () {
 });
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index']);
+    Route::get('dashboard', [DashboardController::class, 'index']);
 
     Route::prefix('company')->group(function () {
         Route::get('/', [CompanyController::class, 'index'])->name('company');
@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('absence')->group(function () {
-        Route::get('/', [AbsenceController::class, 'index'])->name('dashboard');
+        Route::get('/', [AbsenceController::class, 'index']);
     });
 
 });
