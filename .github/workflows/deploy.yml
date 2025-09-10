@@ -31,6 +31,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
             cd ~/employee-absences
+            git add .
+            git commit -m "update from server"
             git pull origin main
             composer install
             php artisan migrate --force
