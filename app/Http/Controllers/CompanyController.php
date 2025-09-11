@@ -12,22 +12,20 @@ class CompanyController extends Controller
     }
 
     public function list(Request $request) {
-        $page = (int) $request->get('page', 1);
         $perPage = 10;
+        $lastId = $request->get('last_id', null);
 
-        $query = Company::query();
+        $query = Company::orderBy('id', 'asc');
 
-        $total = $query->count();
-        $users = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
-        $pages = ceil($total/$perPage);
+        if ($lastId) {
+            $query->where('id', '>', $lastId);
+        }
+
+        $users = $query->take($perPage)->get();
 
         return response()->json([
             'data' => $users,
-            'total' => $total,
-            'page' => $page,
-            'pages' => $pages,
-            'perPage' => $perPage,
-            'hasMore' => ($page * $perPage) < $total
+            'hasMore' => $users->count() === $perPage
         ]);
     }
 }

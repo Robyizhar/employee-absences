@@ -1,4 +1,5 @@
 @extends('layout.admin.app')
+
 @section('content')
 <div class="page-content">
     <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
@@ -53,19 +54,9 @@
                                 <tbody></tbody>
                             </table>
                         </div>
-                        <nav aria-label="...">
-                            <ul class="pagination">
-                                <li class="page-item">
-                                    <a class="page-link cursor-pointer" href="#" id="prev-btn"><<</a>
-                                </li>
-                                <li class="page-item active">
-                                    <a class="page-link cursor-pointer" href="#" id="page-info" href="#">1 <span class="sr-only">(current)</span></a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link cursor-pointer" href="#" id="next-btn">>></a>
-                                </li>
-                            </ul>
-                        </nav>
+                        <div class="text-center mt-3">
+                            <button class="btn btn-primary" id="load-more">Load More</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,9 +66,14 @@
 @endsection
 @push('script')
 <script>
-    let page = 1;
+    let lastId = null;
+    let loading = false;
+
     function loadUsers() {
-        $.getJSON('/company/list?page=' + page, function(res) {
+        if (loading) return;
+        loading = true;
+
+        $.getJSON('/company/list', { last_id: lastId }, function(res) {
             let rows = '';
             $.each(res.data, function(i, user) {
                 rows += `<tr>
@@ -87,26 +83,29 @@
                     <td>${user.address}</td>
                 </tr>`;
             });
-            $('#dTable tbody').html(rows);
-            // update pagination info
-            $('#page-info').text(`Halaman ${res.page} Dari ${res.pages}`);
-            // disable next kalau sudah tidak ada data
-            $('#prev-btn').parent().prop('disabled', res.page === 1);
-            $('#next-btn').parent().prop('disabled', !res.hasMore);
+            $('#dTable tbody').append(rows);
+
+            // update lastId
+            if (res.data.length > 0) {
+                lastId = res.data[res.data.length - 1].id;
+            }
+
+            // hide button kalau tidak ada lagi
+            if (!res.hasMore) {
+                $('#load-more').hide();
+            }
+            $('#load-more').html('Load More');
+            loading = false;
         });
     }
-    $('#prev-btn').click(function(e) {
-        e.preventDefault();
-        if (page > 1) {
-            page--;
-            loadUsers();
-        }
-    });
-    $('#next-btn').click(function(e) {
-        e.preventDefault();
-        page++;
+
+    $('#load-more').click(function() {
+        $(this).html('<div class="loader"></div>');
         loadUsers();
     });
+
+    // load awal
     loadUsers();
+
 </script>
 @endpush
