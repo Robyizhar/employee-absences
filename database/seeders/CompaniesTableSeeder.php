@@ -15,7 +15,7 @@ class CompaniesTableSeeder extends Seeder
         DB::table('companies')->insert([
             [
                 'name' => 'Tech Corp',
-                'code' => 'TC001',
+                'code' => 'C26458A457302130',
                 'address' => 'Jakarta, Indonesia',
             ],
             [
