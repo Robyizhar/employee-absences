@@ -10,13 +10,11 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->string('serial_number');
-            $table->string('trans_id');
             $table->string('location');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
-
+            $table->boolean('is_active')->default(true);
             $table->unique(['company_id', 'serial_number']);
-            $table->unique(['company_id', 'trans_id']);
         });
     }
 

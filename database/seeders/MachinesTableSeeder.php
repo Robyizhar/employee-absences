@@ -14,13 +14,11 @@ class MachinesTableSeeder extends Seeder
             [
                 'company_id' => 1,
                 'serial_number' => 'SN-001',
-                'trans_id' => 'T-1001',
                 'location' => 'Main Office',
             ],
             [
                 'company_id' => 2,
                 'serial_number' => 'SN-002',
-                'trans_id' => 'T-2001',
                 'location' => 'Branch Office',
             ],
         ]);

@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('department')->nullable();
             $table->string('position')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
 

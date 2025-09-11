@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
+use App\Models\Company;
+use App\Models\Machine;
 
 class CompaniesTableSeeder extends Seeder
 {
@@ -12,29 +14,26 @@ class CompaniesTableSeeder extends Seeder
     {
         $faker = Faker::create();
         DB::table('companies')->truncate();
-        DB::table('companies')->insert([
+
+        $kitchen = Company::updateOrCreate(
+            ['code' => 'C26458A457302130'], // kondisi unik
             [
                 'name' => 'Tech Corp',
-                'code' => 'C26458A457302130',
                 'address' => 'Jakarta, Indonesia',
+                'is_active' => true,
+            ]
+        );
+
+        $id = $kitchen->id;
+
+        Machine::updateOrCreate(
+            [
+                'serial_number' => 'C26458A457302130',
+                'company_id' => $id
             ],
             [
-                'name' => 'Biz Solutions',
-                'code' => 'BS002',
-                'address' => 'Bandung, Indonesia',
-            ],
-        ]);
-
-        // Generate 50 data random
-        $companies = [];
-        for ($i = 1; $i <= 50; $i++) {
-            $companies[] = [
-                'name'    => $faker->company,
-                'code'    => strtoupper($faker->bothify('C###')), // contoh: C123
-                'address' => $faker->city . ', ' . $faker->country,
-            ];
-        }
-
-        DB::table('companies')->insert($companies);
+                'location' => 'Main Office'
+            ]
+        );
     }
 }

@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             CompaniesTableSeeder::class,
             // UsersTableSeeder::class,
             EmployeesTableSeeder::class,
-            MachinesTableSeeder::class,
+            // MachinesTableSeeder::class,
             AttendanceLogsTableSeeder::class,
             AttendanceSummaryTableSeeder::class,
             PermissionsDemoSeeder::class,
