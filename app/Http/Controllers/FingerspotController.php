@@ -20,15 +20,11 @@ class FingerspotController extends Controller
         try {
             $payload = $request->getContent();
             $data = json_decode($payload, true);
-            // example response get_userid_list :
-            // {"type":"get_userid_list","cloud_id":"C26458A457302130","trans_id":5,"data":{"total":5,"pin_arr":["1","2","3","4","5"]}}
             switch ($data['type'] ?? null) {
                 case 'get_userid_list':
-
                     $company = Company::select('id', 'code')->where('code', $data['cloud_id'])->first();
-
                     foreach ($data['data']['pin_arr'] as $key => $value) {
-                        Employee::firstOrCreate(
+                        $employee = Employee::firstOrCreate(
                             [
                                 'employee_code' => $value,
                                 'company_id' => $company->id,
@@ -37,6 +33,11 @@ class FingerspotController extends Controller
                                 'is_active' => false
                             ]
                         );
+
+                        $this->fingerspot->getUserInfo([
+                            'cloud_id' => $company->code,
+                            'pin'      => $employee->employee_code,
+                        ]);
                     }
 
                     Storage::append(
@@ -44,6 +45,25 @@ class FingerspotController extends Controller
                         now()->toDateTimeString() . ' => ' . json_encode($data, JSON_PRETTY_PRINT)
                     );
                 break;
+
+                case 'get_userinfo':
+                    $company = Company::select('id', 'code')->where('code', $data['cloud_id'])->first();
+                    $employee = Employee::updateOrCreate(
+                        [
+                            'employee_code' => $data['data']['pin'],
+                            'company_id' => $company->id,
+                        ],
+                        [
+                            'is_active' => true,
+                            'name' => $data['data']['name']
+                        ]
+                    );
+                    Storage::append(
+                        'fingerspot/get_userinfo.log',
+                        now()->toDateTimeString() . ' => ' . json_encode($data, JSON_PRETTY_PRINT)
+                    );
+                break;
+
                 default:
                     Storage::append(
                         'fingerspot/others.log',
