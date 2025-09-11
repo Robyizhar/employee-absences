@@ -26,10 +26,16 @@ class FingerspotController extends Controller
             // \Log::info($data);
             switch ($data['type'] ?? null) {
                 case 'get_userid_list':
-                    Storage::append('fingerspot/get_userid_list.log', $data);
+                    Storage::append(
+                        'fingerspot/get_userid_list.log',
+                        now()->toDateTimeString() . ' => ' . json_encode($data, JSON_PRETTY_PRINT)
+                    );
                 break;
                 default:
-                    Storage::append('fingerspot/others.log', $data);
+                    Storage::append(
+                        'fingerspot/others.log',
+                        now()->toDateTimeString() . ' => ' . json_encode($data, JSON_PRETTY_PRINT)
+                    );
                 break;
             }
 
