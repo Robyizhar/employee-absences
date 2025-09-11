@@ -33,13 +33,11 @@ class FingerspotController extends Controller
                                 'is_active' => false
                             ]
                         );
-
                         $this->fingerspot->getUserInfo([
                             'cloud_id' => $company->code,
                             'pin'      => $employee->employee_code,
                         ]);
                     }
-
                     Storage::append(
                         'fingerspot/get_userid_list.log',
                         now()->toDateTimeString() . ' => ' . json_encode($data, JSON_PRETTY_PRINT)
@@ -63,6 +61,25 @@ class FingerspotController extends Controller
                         now()->toDateTimeString() . ' => ' . json_encode($data, JSON_PRETTY_PRINT)
                     );
                 break;
+
+                case 'attlog':
+
+                    Storage::append(
+                        'fingerspot/attlog.log',
+                        now()->toDateTimeString() . ' => ' . json_encode($data, JSON_PRETTY_PRINT)
+                    );
+                break;
+
+                // 2025-09-11 15:05:44 => {
+                //     "type": "attlog",
+                //     "cloud_id": "C26458A457302130",
+                //     "data": {
+                //         "pin": "2",
+                //         "scan": "2025-09-11 22:05:16",
+                //         "verify": 1,
+                //         "status_scan": 0
+                //     }
+                // }
 
                 default:
                     Storage::append(
