@@ -4,7 +4,7 @@
 <div class="page-content">
     <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
         <div>
-            <h4 class="mb-3 mb-md-0">Company Page</h4>
+        <h4 class="mb-3 mb-md-0">Employee Page</h4>
         </div>
         <div class="d-flex align-items-center flex-wrap text-nowrap">
             {{-- <div class="input-group date datepicker wd-200 me-2 mb-2 mb-md-0" id="dashboardDate">
@@ -14,11 +14,15 @@
             <button type="button" class="btn btn-outline-primary btn-icon-text me-2 mb-2 mb-md-0">
                 <i class="btn-icon-prepend" data-feather="printer"></i>
                 Print
-            </button>
-            <button type="button" class="btn btn-primary btn-icon-text mb-2 mb-md-0">
+            </button> --}}
+            <button type="button" class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0  me-2">
                 <i class="btn-icon-prepend" data-feather="download-cloud"></i>
                 Download Report
-            </button> --}}
+            </button>
+            <button type="button" class="btn btn-primary btn-icon-text mb-2 mb-md-0" id="refresh-btn">
+                <i class="btn-icon-prepend" data-feather="refresh-ccw"></i>
+                Refresh Data
+            </button>
         </div>
     </div>
     <div class="row">
@@ -47,11 +51,16 @@
                                     <tr>
                                         <th class="pt-0">ID</th>
                                         <th class="pt-0">Nama</th>
-                                        <th class="pt-0">Kode Perusahaan</th>
-                                        <th class="pt-0">Alamat</th>
+                                        <th class="pt-0">Kode Karyawan</th>
+                                        <th class="pt-0">Departemen</th>
+                                        <th class="pt-0">Posisi</th>
                                     </tr>
                                 </thead>
-                                <tbody></tbody>
+                                <tbody>
+                                    <tr>
+                                        <td class="pt-0" colspan="5">Data Kosong</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                         <div class="text-center mt-3">
@@ -69,24 +78,24 @@
     let lastId = null;
     let loading = false;
 
-    function loadUsers() {
+    function loadEmployees() {
         if (loading) return;
         loading = true;
 
-        $.getJSON('/company/list', { last_id: lastId }, function(res) {
+        $.getJSON('/employee/list', { last_id: lastId }, function(res) {
             let rows = '';
-            $.each(res.data, function(i, user) {
-                rows += `<tr>
-                    <td>${user.id}</td>
-                    <td>${user.name}</td>
-                    <td>${user.code}</td>
-                    <td>${user.address}</td>
-                </tr>`;
-            });
-            $('#dTable tbody').append(rows);
-
-            // update lastId
             if (res.data.length > 0) {
+                $.each(res.data, function(i, emp) {
+                    rows += `<tr>
+                        <td>${emp.id}</td>
+                        <td>${emp.name}</td>
+                        <td>${emp.employee_code}</td>
+                        <td>${emp.department}</td>
+                        <td>${emp.position}</td>
+                    </tr>`;
+                });
+                $('#dTable tbody').append(rows);
+
                 lastId = res.data[res.data.length - 1].id;
             }
 
@@ -101,11 +110,36 @@
 
     $('#load-more').click(function() {
         $(this).html('<div class="loader"></div>');
-        loadUsers();
+        loadEmployees();
     });
 
     // load awal
-    loadUsers();
+    loadEmployees();
+
+    $('#refresh-btn').click(function() {
+        // tampilkan loading di tombol
+        let btn = $(this);
+        btn.prop('disabled', true).html('<i data-feather="loader" class="spin"></i> Refreshing...');
+
+        $.ajax({
+            url: '/employee/refresh',
+            type: 'GET',
+            success: function(res) {
+                console.log(res);
+                // kembalikan tombol ke normal
+                btn.prop('disabled', false).html('<i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Refresh Data');
+                feather.replace(); // refresh icon feather
+            },
+            error: function() {
+                alert('Gagal refresh data!');
+                btn.prop('disabled', false).html('<i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Refresh Data');
+                feather.replace();
+            }
+        });
+    });
 
 </script>
 @endpush
+
+
+

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\EmployeeController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
@@ -16,9 +17,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/list', [CompanyController::class, 'list']);
     });
 
-    Route::prefix('absence')->group(function () {
-        Route::get('/', [AbsenceController::class, 'index']);
+    Route::prefix('employee')->group(function () {
+        Route::get('/', [EmployeeController::class, 'index'])->name('employee');
+        Route::get('/list', [EmployeeController::class, 'list']);
+        Route::get('/refresh', [EmployeeController::class, 'refreshEmployees']);
     });
+
+    // Route::prefix('absence')->group(function () {
+    //     Route::get('/', [AbsenceController::class, 'index']);
+    // });
 
 });
 

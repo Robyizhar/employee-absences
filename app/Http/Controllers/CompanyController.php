@@ -21,11 +21,11 @@ class CompanyController extends Controller
             $query->where('id', '>', $lastId);
         }
 
-        $users = $query->take($perPage)->get();
+        $data = $query->take($perPage)->get();
 
         return response()->json([
-            'data' => $users,
-            'hasMore' => $users->count() === $perPage
+            'data' => $data,
+            'hasMore' => $data->count() === $perPage
         ]);
     }
 }

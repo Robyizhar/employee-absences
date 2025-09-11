@@ -16,14 +16,21 @@ class FingerspotController extends Controller
 
     public function store(Request $request) {
         try {
-            // ambil semua body JSON
             $payload = $request->getContent();
-
-            // simpan ke file di storage/app/fingerspot/userinfo.txt
-            Storage::append('fingerspot/userinfo.txt', $payload);
-
-            // kalau mau langsung decode JSON
             $data = json_decode($payload, true);
+            // Storage::append('fingerspot.log', $data);
+
+            // example response get_userid_list :
+            // {"type":"get_userid_list","cloud_id":"C26458A457302130","trans_id":5,"data":{"total":5,"pin_arr":["1","2","3","4","5"]}}
+
+            switch ($data->type) {
+                case 'get_userid_list':
+                    Storage::append('fingerspot/get_userid_list.log', $data);
+                break;
+                default:
+                    Storage::append('fingerspot/others.log', $data);
+                break;
+            }
 
             // contoh: simpan ke database (opsional)
             // User::updateOrCreate(
@@ -50,7 +57,6 @@ class FingerspotController extends Controller
     public function userInfo(Request $request) {
         try {
             $data = $this->fingerspot->getUserInfo([
-                'trans_id' => 1,
                 'cloud_id' => 'C26458A457302130',
                 'pin'      => 1,
             ]);
@@ -70,7 +76,6 @@ class FingerspotController extends Controller
     public function attendances(Request $request) {
         try {
             $data = $this->fingerspot->getAttendances([
-                'trans_id'   => 1,
                 'cloud_id'   => 'C26458A457302130',
                 'start_date' => '2025-09-09',
                 'end_date'   => '2025-09-10',
@@ -86,5 +91,15 @@ class FingerspotController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function allPin(Request $request) {
+        $params = [
+            'cloud_id' => 'C26458A457302130',
+        ];
+
+        $result = $this->fingerspot->getAllPin($params);
+
+        return response()->json($result);
     }
 }

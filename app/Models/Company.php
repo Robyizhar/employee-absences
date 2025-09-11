@@ -15,9 +15,14 @@ class Company extends Model
         'name',
         'code',
         'address',
+        'is_active',
     ];
 
     public function users() {
         return $this->hasMany(User::class, 'company_id');
+    }
+
+    public function employees() {
+        return $this->hasMany(Employee::class, 'company_id');
     }
 }

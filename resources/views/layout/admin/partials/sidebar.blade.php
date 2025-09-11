@@ -12,8 +12,8 @@
     <div class="sidebar-body">
         <ul class="nav">
             <li class="nav-item nav-category">Main</li>
-            <li class="nav-item">
-                <a href="dashboard.html" class="nav-link">
+            <li class="nav-item {{ Request::segment(1) == '' ? 'active' : '' }}">
+                <a href="{{url('/')}}" class="nav-link">
                     <i class="link-icon" data-feather="box"></i>
                     <span class="link-title">Dashboard</span>
                 </a>
@@ -28,22 +28,24 @@
                 <div class="collapse" id="emails">
                     <ul class="nav sub-menu">
                         <li class="nav-item">
-                            <a href="pages/email/inbox.html" class="nav-link">Absence Log</a>
+                            <a href="#" class="nav-link">Absence Log</a>
                         </li>
                         <li class="nav-item">
-                            <a href="pages/email/read.html" class="nav-link">Absence Recap</a>
+                            <a href="#" class="nav-link">Absence Recap</a>
                         </li>
                     </ul>
                 </div>
             </li>
-            <li class="nav-item">
-                <a href="dashboard.html" class="nav-link">
+            @if (Auth::user()->getRoleNames()[0] == 'Maintener' || Auth::user()->hasAnyPermission(['master_employees']))
+            <li class="nav-item {{ Request::segment(1) == 'employee' ? 'active' : '' }}">
+                <a href="{{ url('employee') }}" class="nav-link">
                     <i class="link-icon" data-feather="box"></i>
                     <span class="link-title">Employees</span>
                 </a>
             </li>
+            @endif
             @if (Auth::user()->getRoleNames()[0] == 'Maintener' || Auth::user()->hasAnyPermission(['master_companies']))
-            <li class="nav-item {{ Request::segment(2) == 'company' ? 'active' : '' }}">
+            <li class="nav-item {{ Request::segment(1) == 'company' ? 'active' : '' }}">
                 <a href="{{ url('company') }}" class="nav-link ">
                     <i class="link-icon" data-feather="box"></i>
                     <span class="link-title">Companies</span>
