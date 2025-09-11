@@ -23,8 +23,8 @@ class FingerspotController extends Controller
             // example response get_userid_list :
             // {"type":"get_userid_list","cloud_id":"C26458A457302130","trans_id":5,"data":{"total":5,"pin_arr":["1","2","3","4","5"]}}
             // \Log::warning($data->type);
-            \Log::info($data);
-            switch ($data->type) {
+            // \Log::info($data);
+            switch ($data['type'] ?? null) {
                 case 'get_userid_list':
                     Storage::append('fingerspot/get_userid_list.log', $data);
                 break;
