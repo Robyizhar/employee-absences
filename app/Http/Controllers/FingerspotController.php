@@ -32,21 +32,9 @@ class FingerspotController extends Controller
                 break;
             }
 
-            // contoh: simpan ke database (opsional)
-            // User::updateOrCreate(
-            //     ['pin' => $data['data']['pin']],
-            //     [
-            //         'name'      => $data['data']['name'],
-            //         'privilege' => $data['data']['privilege'],
-            //         'rfid'      => $data['data']['rfid'],
-            //         'finger'    => $data['data']['finger'],
-            //         'face'      => $data['data']['face'],
-            //         'vein'      => $data['data']['vein'],
-            //     ]
-            // );
-
             return response("OK", 200);
-        } catch (\Exception $e) {
+        } catch (\Exception $e){
+            \Log::info($e);
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
