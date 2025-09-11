@@ -38,15 +38,16 @@ class CompaniesTableSeeder extends Seeder
             ]
         );
 
-        // $faker = Faker::create();
-        // foreach (range(1, 100) as $i) {
-        //     DB::table('employees')->insert([
-        //         'company_id' => 1,
-        //         'employee_code' => 'EMP' . str_pad($i, 4, '0', STR_PAD_LEFT),
-        //         'name' => $faker->name(),
-        //         'department' => $faker->randomElement(['HR', 'IT', 'Finance', 'Marketing']),
-        //         'position' => $faker->jobTitle(),
-        //     ]);
-        // }
+        $companies = [];
+        for ($i = 1; $i <= 50; $i++) {
+            $companies[] = [
+                'name'      => $faker->company,
+                'code'      => strtoupper($faker->bothify('C###')), // contoh: C123
+                'address'   => $faker->city . ', ' . $faker->country,
+                'is_active' => false,
+            ];
+        }
+
+        DB::table('companies')->insert($companies);
     }
 }
