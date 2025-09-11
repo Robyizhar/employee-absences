@@ -30,13 +30,13 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+            set -e  # stop kalau ada error
             cd ~/employee-absences
-            git add .
-            git commit -m "update from server"
+            git reset --hard   # biar clear
             git pull origin main
-            composer install
-            php artisan migrate
-            php artisan config:cache
-            php artisan route:cache
-            nohup php artisan queue:work > /dev/null 2>&1 &
+            # composer install
+            # php artisan migrate
+            # php artisan config:cache
+            # php artisan route:cache
+            # nohup php artisan queue:work > /dev/null 2>&1 &
           EOF
