@@ -10,7 +10,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->string('employee_code');
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->string('department')->nullable();
             $table->string('position')->nullable();
             $table->boolean('is_active')->default(true);

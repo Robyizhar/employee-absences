@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Repositories\FingerspotRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Company;
+use App\Models\Employee;
 
 class FingerspotController extends Controller
 {
@@ -18,14 +20,25 @@ class FingerspotController extends Controller
         try {
             $payload = $request->getContent();
             $data = json_decode($payload, true);
-            // Storage::append('fingerspot.log', $data);
-
             // example response get_userid_list :
             // {"type":"get_userid_list","cloud_id":"C26458A457302130","trans_id":5,"data":{"total":5,"pin_arr":["1","2","3","4","5"]}}
-            // \Log::warning($data->type);
-            // \Log::info($data);
             switch ($data['type'] ?? null) {
                 case 'get_userid_list':
+
+                    $company = Company::select('id', 'code')->where('code', $data['cloud_id'])->first();
+
+                    foreach ($data['data']['pin_arr'] as $key => $value) {
+                        Employee::firstOrCreate(
+                            [
+                                'employee_code' => $value,
+                                'company_id' => $company->id,
+                            ],
+                            [
+                                'is_active' => false
+                            ]
+                        );
+                    }
+
                     Storage::append(
                         'fingerspot/get_userid_list.log',
                         now()->toDateTimeString() . ' => ' . json_encode($data, JSON_PRETTY_PRINT)
@@ -41,7 +54,7 @@ class FingerspotController extends Controller
 
             return response("OK", 200);
         } catch (\Exception $e){
-            \Log::info($e);
+            \Log::error($e);
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
