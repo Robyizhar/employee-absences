@@ -36,24 +36,16 @@ class PermissionsDemoSeeder extends Seeder {
         $dev->givePermissionTo(Permission::all());
 
         // buat user
-        $user = User::create([
-            'company_id' => 1,
-            'username' => 'admin_techcorp',
-            'email' => 'admin@techcorp.com',
-            'password' => Hash::make('password'),
-        ]);
-        $user->assignRole($admin);
+        // $user = User::create([
+        //     'company_id' => 1,
+        //     'username' => 'admin_techcorp',
+        //     'email' => 'admin@techcorp.com',
+        //     'password' => Hash::make('password'),
+        // ]);
+        // $user->assignRole($admin);
 
         $user = User::create([
-            'company_id' => 2,
-            'username' => 'admin_bizsolutions',
-            'email' => 'admin@bizsolutions.com',
-            'password' => Hash::make('password'),
-        ]);
-        $user->assignRole($admin);
-
-        $user = User::create([
-            'company_id' => 2,
+            'company_id' => null,
             'username' => 'maintener',
             'email' => 'maintener@example.com',
             'password' => Hash::make('asdw1234'),

@@ -15,7 +15,7 @@ class EmployeesTableSeeder extends Seeder
 
         foreach (range(1, 100) as $i) {
             DB::table('employees')->insert([
-                'company_id' => $faker->numberBetween(1, 2), // from seeded companies
+                'company_id' => 1, // from seeded companies
                 'employee_code' => 'EMP' . str_pad($i, 4, '0', STR_PAD_LEFT),
                 'name' => $faker->name(),
                 'department' => $faker->randomElement(['HR', 'IT', 'Finance', 'Marketing']),

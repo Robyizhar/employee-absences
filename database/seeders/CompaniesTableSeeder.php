@@ -13,6 +13,8 @@ class CompaniesTableSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker::create();
+        DB::table('machines')->truncate();
+        DB::table('employees')->truncate();
         DB::table('companies')->truncate();
 
         $kitchen = Company::updateOrCreate(
@@ -35,5 +37,16 @@ class CompaniesTableSeeder extends Seeder
                 'location' => 'Main Office'
             ]
         );
+
+        // $faker = Faker::create();
+        // foreach (range(1, 100) as $i) {
+        //     DB::table('employees')->insert([
+        //         'company_id' => 1,
+        //         'employee_code' => 'EMP' . str_pad($i, 4, '0', STR_PAD_LEFT),
+        //         'name' => $faker->name(),
+        //         'department' => $faker->randomElement(['HR', 'IT', 'Finance', 'Marketing']),
+        //         'position' => $faker->jobTitle(),
+        //     ]);
+        // }
     }
 }

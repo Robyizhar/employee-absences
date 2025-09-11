@@ -19,13 +19,6 @@ class UsersTableSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => 'ADMIN',
             ],
-            [
-                'company_id' => 2,
-                'username' => 'admin_bizsolutions',
-                'email' => 'admin@bizsolutions.com',
-                'password' => Hash::make('password'),
-                'role' => 'ADMIN',
-            ],
         ]);
     }
 }
