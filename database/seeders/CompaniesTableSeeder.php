@@ -42,7 +42,7 @@ class CompaniesTableSeeder extends Seeder
         for ($i = 1; $i <= 50; $i++) {
             $companies[] = [
                 'name'      => $faker->company,
-                'code'      => strtoupper($faker->bothify('C###')), // contoh: C123
+                'code'      => strtoupper($faker->bothify('C###'))."-$i", // contoh: C123
                 'address'   => $faker->city . ', ' . $faker->country,
                 'is_active' => false,
             ];
