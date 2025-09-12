@@ -111,6 +111,7 @@ class FingerspotController extends Controller
                     $dupThreshold = config('attendance.duplicate_threshold_seconds', 30);
 
                     $last = AttendanceLogs::where('employee_id', $employee?->id ?? null)
+                        ->where('company_id', $company->id)
                         ->whereDate('scan_time', $scan->toDateString())
                         ->orderBy('scan_time', 'desc')
                         ->first();
@@ -118,9 +119,9 @@ class FingerspotController extends Controller
                     if ($last && $last->scan_time->diffInSeconds($scan) <= $dupThreshold) {
                         // Save as duplicate (opsional) OR skip saving.
                         AttendanceLogs::create([
-                            'company_id' => $employee?->company_id ?? null,
-                            'machine_id' => $machine?->id ?? null,
-                            'employee_id' => $employee?->id ?? null,
+                            'company_id' => $company->id,
+                            'machine_id' => $machine->id,
+                            'employee_id' => $employee->id,
                             'scan_time' => $scan,
                             'status' => $last->status, // keep last status, or set set null
                             'raw_payload' => $payload,
