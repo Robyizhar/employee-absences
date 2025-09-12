@@ -90,6 +90,11 @@ class FingerspotController extends Controller
                     $machine = Machine::where('serial_number', $data['cloud_id'] ?? null)
                         ->first();
 
+                    if (!$company || !$employee || !$machine) {
+                        StoreFingerLogJob::dispatch('fingerspot/attlog.log', [ 'null' => '!$company || !$employee || !$machine']);
+                        return null;
+                    }
+
                     // parse time with timezone
                     $tz = config('attendance.timezone', config('app.timezone', 'Asia/Jakarta'));
                     $scan = Carbon::parse($scanStr, $tz);
