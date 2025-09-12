@@ -10,6 +10,7 @@ use App\Models\Employee;
 use App\Models\AttendanceLogs;
 use App\Models\Machine;
 use App\Jobs\StoreFingerLogJob;
+use Carbon\Carbon;
 
 class FingerspotController extends Controller
 {
@@ -60,7 +61,15 @@ class FingerspotController extends Controller
                     );
                     return true;
                 break;
-
+                /**
+                     * Process an attlog callback payload from Fingerspot and store result.
+                     *
+                     * Strategy:
+                     *  - map status_scan -> verification_method
+                     *  - deduplicate if previous scan close in time (config threshold)
+                     *  - determine IN/OUT by alternation per-day (first -> IN; next -> OUT; next->IN; ...)
+                     *  - calculate late/early seconds & minutes against configured work_start/work_end
+                 */
                 case 'attlog':
                     StoreFingerLogJob::dispatch('fingerspot/attlog.log', $data);
                     $pin = $data['data']['pin'] ?? null;
