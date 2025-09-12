@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Company;
 use App\Models\Employee;
+use App\Models\AttendanceLogs;
 
 class FingerspotController extends Controller
 {
@@ -53,7 +54,8 @@ class FingerspotController extends Controller
                         ],
                         [
                             'is_active' => true,
-                            'name' => $data['data']['name']
+                            'name' => $data['data']['name'],
+                            'template' => $data['data']['template']
                         ]
                     );
                     Storage::append(
@@ -63,6 +65,11 @@ class FingerspotController extends Controller
                 break;
 
                 case 'attlog':
+
+                    $log = AttendanceLogs::processAttlogPayload($data);
+
+                    // optional: broadcast event ke client realtime (websocket)
+                    // broadcast(new \App\Events\AttendanceCreated($log));
 
                     Storage::append(
                         'fingerspot/attlog.log',

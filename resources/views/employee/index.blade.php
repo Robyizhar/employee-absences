@@ -85,6 +85,7 @@
         $.getJSON('/employee/list', { last_id: lastId }, function(res) {
             let rows = '';
             if (res.data.length > 0) {
+                $('#dTable tbody').empty();
                 $.each(res.data, function(i, emp) {
                     rows += `<tr>
                         <td>${emp.id}</td>
@@ -99,7 +100,6 @@
                 lastId = res.data[res.data.length - 1].id;
             }
 
-            // hide button kalau tidak ada lagi
             if (!res.hasMore) {
                 $('#load-more').hide();
             }
@@ -113,11 +113,9 @@
         loadEmployees();
     });
 
-    // load awal
     loadEmployees();
 
     $('#refresh-btn').click(function() {
-        // tampilkan loading di tombol
         let btn = $(this);
         btn.prop('disabled', true).html('<i data-feather="loader" class="spin"></i> Refreshing...');
 
@@ -126,9 +124,12 @@
             type: 'GET',
             success: function(res) {
                 console.log(res);
-                // kembalikan tombol ke normal
                 btn.prop('disabled', false).html('<i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Refresh Data');
                 feather.replace(); // refresh icon feather
+                setTimeout(function() {
+                    lastId = null;
+                    loadEmployees();
+                }, 3000);
             },
             error: function() {
                 alert('Gagal refresh data!');
