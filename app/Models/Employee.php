@@ -18,6 +18,7 @@ class Employee extends Model
         'department',
         'position',
         'is_active',
+        'template'
     ];
 
     public function company() {
