@@ -110,9 +110,12 @@ class FingerspotController extends Controller
                      // duplicate detection
                     $dupThreshold = config('attendance.duplicate_threshold_seconds', 30);
 
+                    $startOfDay = $scan->copy()->setTimezone('Asia/Jakarta')->startOfDay()->setTimezone('UTC');
+                    $endOfDay   = $scan->copy()->setTimezone('Asia/Jakarta')->endOfDay()->setTimezone('UTC');
+
                     $last = AttendanceLogs::where('employee_id', $employee?->id ?? null)
                         ->where('company_id', $company->id)
-                        ->whereDate('scan_time', $scan->toDateString())
+                        ->whereBetween('scan_time', [$startOfDay, $endOfDay])
                         ->orderBy('scan_time', 'desc')
                         ->first();
 
@@ -122,7 +125,7 @@ class FingerspotController extends Controller
                             'company_id' => $company->id,
                             'machine_id' => $machine->id,
                             'employee_id' => $employee->id,
-                            'scan_time' => $scan,
+                            'scan_time' => Carbon::parse($scan, 'Asia/Jakarta')->timezone('UTC'),
                             'status' => $last->status, // keep last status, or set set null
                             'raw_payload' => $payload,
                             'verification_method' => $verificationMethod,
@@ -170,7 +173,7 @@ class FingerspotController extends Controller
                         'company_id' => $employee?->company_id ?? null,
                         'machine_id' => $machine?->id ?? null,
                         'employee_id' => $employee?->id ?? null,
-                        'scan_time' => $scan,
+                        'scan_time' => Carbon::parse($scan, 'Asia/Jakarta')->timezone('UTC'),
                         'status' => $direction, // IN or OUT
                         'raw_payload' => $payload,
                         'verification_method' => $verificationMethod,

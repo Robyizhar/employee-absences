@@ -20,18 +20,18 @@
             </li>
             <li class="nav-item nav-category">WEB APP</li>
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="collapse" href="#emails" role="button" aria-expanded="false" aria-controls="emails">
+                <a class="nav-link" data-bs-toggle="collapse" href="#absence" role="button" aria-expanded="false" aria-controls="absence">
                     <i class="link-icon" data-feather="mail"></i>
                         <span class="link-title">Absence</span>
                     <i class="link-arrow" data-feather="chevron-down"></i>
                 </a>
-                <div class="collapse" id="emails">
+                <div class="collapse" id="absence">
                     <ul class="nav sub-menu">
                         <li class="nav-item">
-                            <a href="#" class="nav-link">Absence Log</a>
+                            <a href="{{ url('absence') }}" class="nav-link">Absence Log</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">Absence Recap</a>
+                            <a href="{{ url('absence') }}" class="nav-link">Absence Recap</a>
                         </li>
                     </ul>
                 </div>
