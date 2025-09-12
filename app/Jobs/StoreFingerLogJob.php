@@ -31,6 +31,7 @@ class StoreFingerLogJob implements ShouldQueue
     public function handle(): void
     {
         \Log::info($this->path);
+        \Log::info('DISK PATH: ' . Storage::disk('local')->path($this->path));
         Storage::append(
             $this->path,
             now()->toDateTimeString() . ' => ' . json_encode($this->data, JSON_PRETTY_PRINT)
