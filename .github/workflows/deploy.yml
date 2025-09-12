@@ -30,13 +30,17 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
-            set -e  # stop kalau ada error
+            set -e
             cd ~/employee-absences
-            git reset --hard   # biar clear
+            git reset --hard
             git pull origin main
-            # composer install
-            # php artisan migrate
-            # php artisan config:cache
-            # php artisan route:cache
-            # nohup php artisan queue:work > /dev/null 2>&1 &
+
+            composer install --no-interaction --prefer-dist --optimize-autoloader
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+
+            # Restart queue worker (pakai nohup supaya jalan di background)
+            pkill -f "artisan queue:work" || true
+            nohup php artisan queue:work --daemon --tries=3 > storage/logs/queue.log 2>&1 &
           EOF

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Company;
 use App\Models\Employee;
 use App\Models\AttendanceLogs;
+use App\Models\Machine;
+use App\Jobs\StoreFingerLogJob;
 
 class FingerspotController extends Controller
 {
@@ -23,6 +25,7 @@ class FingerspotController extends Controller
             $data = json_decode($payload, true);
             switch ($data['type'] ?? null) {
                 case 'get_userid_list':
+                    StoreFingerLogJob::dispatch('fingerspot/get_userid_list.log', $data);
                     $company = Company::select('id', 'code')->where('code', $data['cloud_id'])->first();
                     foreach ($data['data']['pin_arr'] as $key => $value) {
                         $employee = Employee::firstOrCreate(
@@ -39,13 +42,10 @@ class FingerspotController extends Controller
                             'pin'      => $employee->employee_code,
                         ]);
                     }
-                    Storage::append(
-                        'fingerspot/get_userid_list.log',
-                        now()->toDateTimeString() . ' => ' . json_encode($data, JSON_PRETTY_PRINT)
-                    );
                 break;
 
                 case 'get_userinfo':
+                    StoreFingerLogJob::dispatch('fingerspot/get_userinfo.log', $data);
                     $company = Company::select('id', 'code')->where('code', $data['cloud_id'])->first();
                     $employee = Employee::updateOrCreate(
                         [
@@ -58,35 +58,116 @@ class FingerspotController extends Controller
                             'template' => $data['data']['template']
                         ]
                     );
-                    Storage::append(
-                        'fingerspot/get_userinfo.log',
-                        now()->toDateTimeString() . ' => ' . json_encode($data, JSON_PRETTY_PRINT)
-                    );
+                    return true;
                 break;
 
                 case 'attlog':
+                    StoreFingerLogJob::dispatch('fingerspot/attlog.log', $data);
+                    $pin = $data['data']['pin'] ?? null;
+                    $scanStr = $data['data']['scan'] ?? null;
+                    $statusScan = $data['data']['status_scan'] ?? null;
 
-                    $log = AttendanceLogs::processAttlogPayload($data);
+                    if (!$pin || !$scanStr)
+                        return null;
 
-                    // optional: broadcast event ke client realtime (websocket)
-                    // broadcast(new \App\Events\AttendanceCreated($log));
+                    $company = Company::select('id', 'code')
+                        ->where('code', $data['cloud_id'])
+                        ->first();
 
-                    Storage::append(
-                        'fingerspot/attlog.log',
-                        now()->toDateTimeString() . ' => ' . json_encode($data, JSON_PRETTY_PRINT)
-                    );
+                    $employee = Employee::where('employee_code', $pin)
+                        ->where('company_id', $company->id)
+                        ->first();
+
+                    $machine = Machine::where('serial_number', $data['cloud_id'] ?? null)
+                        ->first();
+
+                    // parse time with timezone
+                    $tz = config('attendance.timezone', config('app.timezone', 'Asia/Jakarta'));
+                    $scan = Carbon::parse($scanStr, $tz);
+
+                    $verificationMethod = match($statusScan) {
+                        0 => 'finger',
+                        1 => 'face',
+                        2 => 'password',
+                        3 => 'rfid',
+                        default => 'other'
+                    };
+
+                     // duplicate detection
+                    $dupThreshold = config('attendance.duplicate_threshold_seconds', 30);
+
+                    $last = AttendanceLogs::where('employee_id', $employee?->id ?? null)
+                        ->whereDate('scan_time', $scan->toDateString())
+                        ->orderBy('scan_time', 'desc')
+                        ->first();
+
+                    if ($last && $last->scan_time->diffInSeconds($scan) <= $dupThreshold) {
+                        // Save as duplicate (opsional) OR skip saving.
+                        AttendanceLogs::create([
+                            'company_id' => $employee?->company_id ?? null,
+                            'machine_id' => $machine?->id ?? null,
+                            'employee_id' => $employee?->id ?? null,
+                            'scan_time' => $scan,
+                            'status' => $last->status, // keep last status, or set set null
+                            'raw_payload' => $payload,
+                            'verification_method' => $verificationMethod,
+                            'is_duplicate' => true,
+                        ]);
+                        return true;
+                    }
+
+                    // Determine new attendance direction (IN / OUT) by alternation per day:
+                    if (!$last) {
+                        $direction = 'IN';
+                    } else {
+                        // alternate: if last was IN -> this is OUT; if last was OUT -> this is IN
+                        $direction = $last->status === 'IN' ? 'OUT' : 'IN';
+                    }
+
+                     // Work start/end for that day
+                    $workStart = Carbon::parse($scan->toDateString() . ' ' . config('attendance.work_start', '08:00:00'), $tz);
+                    $workEnd = Carbon::parse($scan->toDateString() . ' ' . config('attendance.work_end', '17:00:00'), $tz);
+
+                    $lateSeconds = null;
+                    $earlySeconds = null;
+                    $lateMinutes = null;
+                    $earlyMinutes = null;
+
+                    if ($direction === 'IN') {
+                        if ($scan->lessThanOrEqualTo($workStart->addSeconds(config('attendance.grace_seconds', 0)))) {
+                            $lateSeconds = 0;
+                            $lateMinutes = 0;
+                        } else {
+                            $lateSeconds = $scan->diffInSeconds($workStart);
+                            $lateMinutes = intdiv($lateSeconds, 60);
+                        }
+                    } else { // OUT
+                        if ($scan->greaterThanOrEqualTo($workEnd)) {
+                            $earlySeconds = 0;
+                            $earlyMinutes = 0;
+                        } else {
+                            $earlySeconds = $workEnd->diffInSeconds($scan);
+                            $earlyMinutes = intdiv($earlySeconds, 60);
+                        }
+                    }
+
+                    AttendanceLogs::create([
+                        'company_id' => $employee?->company_id ?? null,
+                        'machine_id' => $machine?->id ?? null,
+                        'employee_id' => $employee?->id ?? null,
+                        'scan_time' => $scan,
+                        'status' => $direction, // IN or OUT
+                        'raw_payload' => $payload,
+                        'verification_method' => $verificationMethod,
+                        'is_duplicate' => false,
+                        'late_seconds' => $lateSeconds,
+                        'late_minutes' => $lateMinutes,
+                        'early_seconds' => $earlySeconds,
+                        'early_leave_minutes' => $earlyMinutes,
+                    ]);
+
+                    return true;
                 break;
-
-                // 2025-09-11 15:05:44 => {
-                //     "type": "attlog",
-                //     "cloud_id": "C26458A457302130",
-                //     "data": {
-                //         "pin": "2",
-                //         "scan": "2025-09-11 22:05:16",
-                //         "verify": 1,
-                //         "status_scan": 0
-                //     }
-                // }
 
                 default:
                     Storage::append(

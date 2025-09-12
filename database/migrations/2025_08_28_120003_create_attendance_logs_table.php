@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->enum('status', ['IN','OUT','BREAK_IN','BREAK_IN_OUT']);
             $table->json('raw_payload'); // Postgres: jsonb, MySQL: json
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
 
             $table->index(['employee_id', 'scan_time']);
             $table->index(['company_id', 'scan_time']);
