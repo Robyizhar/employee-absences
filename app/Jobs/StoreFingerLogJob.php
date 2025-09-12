@@ -30,12 +30,25 @@ class StoreFingerLogJob implements ShouldQueue
      */
     public function handle(): void
     {
-        \Log::info($this->path);
-        \Log::info('DISK PATH: ' . Storage::disk('local')->path($this->path));
-        \Log::warning(now()->toDateTimeString() . ' => ' . json_encode($this->data, JSON_PRETTY_PRINT));
-        Storage::append(
-            $this->path,
-            now()->toDateTimeString() . ' => ' . json_encode($this->data, JSON_PRETTY_PRINT)
-        );
+        try {
+            \Log::info($this->path);
+            \Log::info('DISK PATH: ' . Storage::disk('local')->path($this->path));
+
+            $line = now()->toDateTimeString() . ' => ' . json_encode($this->data, JSON_PRETTY_PRINT);
+
+            $ok = Storage::append($this->path, $line);
+
+            if (! $ok) {
+                \Log::error("APPEND FAIL (return false) for {$this->path}");
+            } else {
+                \Log::info("APPEND SUCCESS {$this->path}");
+            }
+            Storage::append(
+                $this->path,
+                now()->toDateTimeString() . ' => ' . json_encode($this->data, JSON_PRETTY_PRINT)
+            );
+        } catch (\Throwable $th) {
+            \Log::error("APPEND EXCEPTION: " . $e->getMessage());
+        }
     }
 }
