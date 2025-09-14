@@ -16,7 +16,7 @@ class AbsenceController extends Controller
         $lastId = $request->get('last_id', null);
 
         $query = AttendanceLogs::with(['employee', 'machine'])
-            ->orderBy('id', 'asc');
+            ->orderBy('created_at', 'desc');
 
         if ($lastId) {
             $query->where('id', '>', $lastId);
