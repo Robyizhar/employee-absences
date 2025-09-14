@@ -9,10 +9,9 @@ return new class extends Migration {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('master_department_id')->constrained()->cascadeOnDelete();
             $table->string('employee_code');
             $table->string('name')->nullable();
-            $table->string('department')->nullable();
-            $table->string('position')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
