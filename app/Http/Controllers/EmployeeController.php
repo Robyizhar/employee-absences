@@ -51,6 +51,7 @@ class EmployeeController extends Controller
             $result = $this->fingerspot->getAllPin($params);
         }
 
+        // \Log::info($codes);
         return response()->json($codes, 200);
     }
 }
