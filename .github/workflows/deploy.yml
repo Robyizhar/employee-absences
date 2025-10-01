@@ -40,6 +40,9 @@ jobs:
             php artisan config:cache
             php artisan route:cache
 
+            npm install
+            npm run build
+
             # Restart queue worker (pakai nohup supaya jalan di background)
             pkill -f "artisan queue:work" || true
             nohup php artisan queue:work --daemon --tries=3 > storage/logs/queue.log 2>&1 &
