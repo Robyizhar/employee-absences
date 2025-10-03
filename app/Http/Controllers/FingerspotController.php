@@ -99,13 +99,25 @@ class FingerspotController extends Controller
                     $tz = config('attendance.timezone', config('app.timezone', 'Asia/Jakarta'));
                     $scan = Carbon::parse($scanStr, $tz);
 
-                    $verificationMethod = match($statusScan) {
-                        0 => 'finger',
-                        1 => 'face',
-                        2 => 'password',
-                        3 => 'rfid',
-                        default => 'other'
-                    };
+                    $verificationMethod = 'other';
+
+                    switch ($statusScan) {
+                        case 0:
+                            $verificationMethod = 'finger';
+                            break;
+                        case 1:
+                            $verificationMethod = 'face';
+                            break;
+                        case 2:
+                            $verificationMethod = 'password';
+                            break;
+                        case 3:
+                            $verificationMethod = 'rfid';
+                            break;
+                        default:
+                            $verificationMethod = 'other';
+                            break;
+                    }
 
                      // duplicate detection
                     $dupThreshold = config('attendance.duplicate_threshold_seconds', 30);
