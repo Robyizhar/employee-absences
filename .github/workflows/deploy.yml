@@ -48,7 +48,7 @@ jobs:
             sudo chown -R www-data:www-data storage bootstrap/cache
 
             git add .
-            git commit -m "update from server"
+            git commit -m "update: from server"
 
             # Restart queue worker (pakai nohup supaya jalan di background)
             pkill -f "artisan queue:work" || true
