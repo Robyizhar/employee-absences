@@ -47,6 +47,9 @@ jobs:
             sudo chmod -R 775 storage bootstrap/cache
             sudo chown -R www-data:www-data storage bootstrap/cache
 
+            git add .
+            git commit -m "update from server"
+
             # Restart queue worker (pakai nohup supaya jalan di background)
             pkill -f "artisan queue:work" || true
             nohup php artisan queue:work --daemon --tries=3 > storage/logs/queue.log 2>&1 &
