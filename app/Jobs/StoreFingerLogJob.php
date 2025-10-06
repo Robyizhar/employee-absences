@@ -31,18 +31,16 @@ class StoreFingerLogJob implements ShouldQueue
     public function handle(): void
     {
         try {
-            \Log::info($this->path);
-            \Log::info('DISK PATH: ' . Storage::disk('local')->path($this->path));
+            // \Log::info($this->path);
+            // \Log::info('DISK PATH: ' . Storage::disk('local')->path($this->path));
 
             $line = now()->toDateTimeString() . ' => ' . json_encode($this->data, JSON_PRETTY_PRINT);
 
             $ok = Storage::append($this->path, $line);
 
-            if (! $ok) {
+            if (!$ok)
                 \Log::error("APPEND FAIL (return false) for {$this->path}");
-            } else {
-                \Log::info("APPEND SUCCESS {$this->path}");
-            }
+
             Storage::append(
                 $this->path,
                 now()->toDateTimeString() . ' => ' . json_encode($this->data, JSON_PRETTY_PRINT)

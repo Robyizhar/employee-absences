@@ -96,34 +96,24 @@ class FingerspotController extends Controller
                     }
 
                     // parse time with timezone
-                    $tz = config('attendance.timezone', config('app.timezone', 'Asia/Jakarta'));
-                    $scan = Carbon::parse($scanStr, $tz);
+                    $tz = config('app.absence_timezone', 'Asia/Jakarta');
+                    // $scan = Carbon::parse($scanStr, $tz);
+                    $scan_converted = Carbon::parse($scanStr, $tz)->setTimezone('UTC');
 
-                    $verificationMethod = 'other';
-
-                    switch ($statusScan) {
-                        case 0:
-                            $verificationMethod = 'finger';
-                            break;
-                        case 1:
-                            $verificationMethod = 'face';
-                            break;
-                        case 2:
-                            $verificationMethod = 'password';
-                            break;
-                        case 3:
-                            $verificationMethod = 'rfid';
-                            break;
-                        default:
-                            $verificationMethod = 'other';
-                            break;
-                    }
+                    $verificationMethod = match($statusScan) {
+                        0 => 'finger',
+                        1 => 'face',
+                        2 => 'password',
+                        3 => 'rfid',
+                        default => 'other'
+                    };
 
                      // duplicate detection
                     $dupThreshold = config('attendance.duplicate_threshold_seconds', 30);
 
-                    $startOfDay = $scan->copy()->setTimezone('Asia/Jakarta')->startOfDay()->setTimezone('UTC');
-                    $endOfDay   = $scan->copy()->setTimezone('Asia/Jakarta')->endOfDay()->setTimezone('UTC');
+                    $startOfDay = $scan_converted->copy()->setTimezone($tz)->startOfDay()->setTimezone('UTC');
+                    $endOfDay   = $scan_converted->copy()->setTimezone($tz)->endOfDay()->setTimezone('UTC');
+                    $workStartLocal = config('attendance.work_start', '08:00:00');
 
                     $last = AttendanceLogs::where('employee_id', $employee?->id ?? null)
                         ->where('company_id', $company->id)
@@ -131,18 +121,54 @@ class FingerspotController extends Controller
                         ->orderBy('scan_time', 'desc')
                         ->first();
 
-                    if ($last && $last->scan_time->diffInSeconds($scan) <= $dupThreshold) {
-                        // Save as duplicate (opsional) OR skip saving.
-                        AttendanceLogs::create([
-                            'company_id' => $company->id,
-                            'machine_id' => $machine->id,
-                            'employee_id' => $employee->id,
-                            'scan_time' => Carbon::parse($scan, 'Asia/Jakarta')->timezone('UTC'),
-                            'status' => $last->status, // keep last status, or set set null
-                            'raw_payload' => $payload,
-                            'verification_method' => $verificationMethod,
-                            'is_duplicate' => true,
-                        ]);
+                    $workStart = $scan_converted->copy()
+                        ->setTimezone($tz)
+                        ->startOfDay()
+                        ->setTimeFromTimeString($workStartLocal)
+                        ->setTimezone('UTC');
+
+
+                    if ($last) {
+                        if (
+                            $last->scan_time->diffInSeconds($scan_converted) <= $dupThreshold
+                        ) {
+                            AttendanceLogs::create([
+                                'company_id' => $company->id,
+                                'machine_id' => $machine->id,
+                                'employee_id' => $employee->id,
+                                'scan_time' => $scan_converted,
+                                'status' => $last->status, // keep last status, or set set null
+                                'raw_payload' => $payload,
+                                'verification_method' => $verificationMethod,
+                                'is_duplicate' => true,
+                            ]);
+                            return true;
+                        }
+
+                        if ($last->scan_time->lessThan($workStart)) {
+                            AttendanceLogs::create([
+                                'company_id' => $company->id,
+                                'machine_id' => $machine->id,
+                                'employee_id' => $employee->id,
+                                'scan_time' => $scan_converted,
+                                'status' => 'IN',
+                                'raw_payload' => $payload,
+                                'verification_method' => $verificationMethod,
+                                'is_duplicate' => true,
+                            ]);
+                        } else {
+                            AttendanceLogs::create([
+                                'company_id' => $company->id,
+                                'machine_id' => $machine->id,
+                                'employee_id' => $employee->id,
+                                'scan_time' => $scan_converted,
+                                'status' => 'OUT',
+                                'raw_payload' => $payload,
+                                'verification_method' => $verificationMethod,
+                                'is_duplicate' => true,
+                            ]);
+                        }
+
                         return true;
                     }
 
@@ -155,8 +181,8 @@ class FingerspotController extends Controller
                     }
 
                      // Work start/end for that day
-                    $workStart = Carbon::parse($scan->toDateString() . ' ' . config('attendance.work_start', '08:00:00'), $tz);
-                    $workEnd = Carbon::parse($scan->toDateString() . ' ' . config('attendance.work_end', '17:00:00'), $tz);
+                    $workStart = Carbon::parse($scan_converted->toDateString() . ' ' . config('attendance.work_start', '08:00:00'), $tz);
+                    $workEnd = Carbon::parse($scan_converted->toDateString() . ' ' . config('attendance.work_end', '17:00:00'), $tz);
 
                     $lateSeconds = null;
                     $earlySeconds = null;
@@ -164,19 +190,19 @@ class FingerspotController extends Controller
                     $earlyMinutes = null;
 
                     if ($direction === 'IN') {
-                        if ($scan->lessThanOrEqualTo($workStart->addSeconds(config('attendance.grace_seconds', 0)))) {
+                        if ($scan_converted->lessThanOrEqualTo($workStart->addSeconds(config('attendance.grace_seconds', 0)))) {
                             $lateSeconds = 0;
                             $lateMinutes = 0;
                         } else {
-                            $lateSeconds = $scan->diffInSeconds($workStart);
+                            $lateSeconds = $scan_converted->diffInSeconds($workStart);
                             $lateMinutes = intdiv($lateSeconds, 60);
                         }
                     } else { // OUT
-                        if ($scan->greaterThanOrEqualTo($workEnd)) {
+                        if ($scan_converted->greaterThanOrEqualTo($workEnd)) {
                             $earlySeconds = 0;
                             $earlyMinutes = 0;
                         } else {
-                            $earlySeconds = $workEnd->diffInSeconds($scan);
+                            $earlySeconds = $workEnd->diffInSeconds($scan_converted);
                             $earlyMinutes = intdiv($earlySeconds, 60);
                         }
                     }
@@ -185,7 +211,7 @@ class FingerspotController extends Controller
                         'company_id' => $employee?->company_id ?? null,
                         'machine_id' => $machine?->id ?? null,
                         'employee_id' => $employee?->id ?? null,
-                        'scan_time' => Carbon::parse($scan, 'Asia/Jakarta')->timezone('UTC'),
+                        'scan_time' => Carbon::parse($scan_converted, $tz)->timezone('UTC'),
                         'status' => $direction, // IN or OUT
                         'raw_payload' => $payload,
                         'verification_method' => $verificationMethod,

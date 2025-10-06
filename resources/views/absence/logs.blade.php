@@ -77,6 +77,8 @@
 <script>
     let lastId = null;
     let loading = false;
+    const appTimezone = "{{ config('app.absence_timezone') }}";
+    // console.log("Timezone Laravel:", appTimezone);
 
     function loadAbsences() {
         if (loading) return;
@@ -87,12 +89,14 @@
             if (res.data.length > 0) {
                 $('#dTable tbody').empty();
                 $.each(res.data, function(i, log) {
+                    console.log('log.scan_time', log.scan_time);
+
                     rows += `<tr>
                         <td>${log.id}</td>
                         <td>${log.employee ? log.employee.name : '-'}</td>
                         <td>
                             ${new Date(log.scan_time).toLocaleString("id-ID", {
-                                timeZone: "Asia/Jakarta",
+                                timeZone: appTimezone,
                                 day: "2-digit",
                                 month: "long",
                                 year: "numeric",
