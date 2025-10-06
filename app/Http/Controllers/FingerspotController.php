@@ -292,5 +292,3 @@ class FingerspotController extends Controller
         return response()->json($result);
     }
 }
-
-// FINGERSPOT.IO
