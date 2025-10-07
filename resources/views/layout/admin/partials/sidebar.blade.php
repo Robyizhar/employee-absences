@@ -52,6 +52,14 @@
                 </a>
             </li>
             @endif
+            @if (Auth::user()->getRoleNames()[0] == 'Maintener' || Auth::user()->hasAnyPermission(['master_companies']))
+            <li class="nav-item {{ Request::segment(1) == 'department' ? 'active' : '' }}">
+                <a href="{{ url('department') }}" class="nav-link ">
+                    <i class="link-icon" data-feather="box"></i>
+                    <span class="link-title">Departement</span>
+                </a>
+            </li>
+            @endif
         </ul>
     </div>
 </nav>

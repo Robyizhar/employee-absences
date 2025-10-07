@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('machine_id')->nullable();
+            $table->string('company_id')->nullable();
             $table->string('code');
             $table->time('start_time');
             $table->time('end_time');

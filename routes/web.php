@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\DepartmentController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
@@ -27,6 +28,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [AbsenceController::class, 'index']);
         Route::get('/list', [AbsenceController::class, 'list']);
         // Route::get('/refresh', [AbsenceController::class, 'refreshEmployees']);
+    });
+
+    Route::prefix('department')->group(function () {
+        Route::get('/', [DepartmentController::class, 'index']);
+        Route::get('/list', [DepartmentController::class, 'list']);
+        // Route::get('/refresh', [DepartmentController::class, 'refreshEmployees']);
     });
 
 });

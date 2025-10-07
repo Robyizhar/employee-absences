@@ -13,7 +13,7 @@ class Department extends Model
 
     protected $fillable = [
         'name',
-        'machine_id',
+        'company_id',
         'code',
         'start_time',
         'end_time',
@@ -21,5 +21,9 @@ class Department extends Model
 
     public function employees() {
         return $this->hasMany(Employee::class, 'department_id');
+    }
+
+    public function company() {
+        return $this->belongsTo(Company::class, 'company_id');
     }
 }
