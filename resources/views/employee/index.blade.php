@@ -53,7 +53,7 @@
                                         <th class="pt-0">Nama</th>
                                         <th class="pt-0">Kode Karyawan</th>
                                         <th class="pt-0">Departemen</th>
-                                        <th class="pt-0">Posisi</th>
+                                        <th class="pt-0">Perusahaan</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -91,8 +91,8 @@
                         <td>${emp.id}</td>
                         <td>${emp.name}</td>
                         <td>${emp.employee_code}</td>
-                        <td>${emp.department}</td>
-                        <td>${emp.position}</td>
+                        <td>${emp.department ? emp.department.name : '-'}</td>
+                        <td>${emp.company ? emp.company.name : '-'}</td>
                     </tr>`;
                 });
                 $('#dTable tbody').append(rows);

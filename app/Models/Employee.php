@@ -15,7 +15,7 @@ class Employee extends Model
         'company_id',
         'employee_code',
         'name',
-        'department',
+        'department_id',
         'position',
         'is_active',
         'template'
@@ -23,6 +23,10 @@ class Employee extends Model
 
     public function company() {
         return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function department() {
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
 }

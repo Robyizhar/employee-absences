@@ -22,7 +22,7 @@ class EmployeeController extends Controller
     public function list(Request $request) {
         $perPage = 10;
         $lastId = $request->get('last_id', null);
-        $query = Employee::orderBy('created_at', 'desc');
+        $query = Employee::with('company', 'department')->orderBy('created_at', 'desc');
 
         if ($lastId)
             $query->where('id', '>', $lastId);
