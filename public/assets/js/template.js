@@ -7,7 +7,7 @@
     var footer = $('footer');
     var sidebar = $('.sidebar');
     var navbar = $('.navbar').not('.top-navbar');
-    
+
 
     // Enable feather-icons with SVG markup
     feather.replace();
@@ -45,7 +45,7 @@
     })
 
 
-    // Applying perfect-scrollbar 
+    // Applying perfect-scrollbar
     if ($('.sidebar .sidebar-body').length) {
       const sidebarBodyScroll = new PerfectScrollbar('.sidebar-body');
     }
@@ -99,6 +99,7 @@
 
     //Add active class to nav-link based on url dynamically
     function addActiveClass(element) {
+
         if (current === "") {
           //for root url
           if (element.attr('href').indexOf("index.html") !== -1) {
@@ -110,11 +111,13 @@
           }
         } else {
           //for other url
+          // console.log("HOLAS 2");
+
           if (element.attr('href').indexOf(current) !== -1) {
             element.parents('.nav-item').last().addClass('active');
             if (element.parents('.sub-menu').length) {
               element.closest('.collapse').addClass('show');
-              element.addClass('active');
+              // element.addClass('active');
             }
             if (element.parents('.submenu-item').length) {
               element.addClass('active');
@@ -149,7 +152,7 @@
     });
 
 
-    // close sidebar when click outside on mobile/table    
+    // close sidebar when click outside on mobile/table
     $(document).on('click touchstart', function(e){
       e.stopPropagation();
 
@@ -178,7 +181,7 @@
           navItemClicked.removeClass('show-submenu');
         }
         $(this).toggleClass('show-submenu');
-      }        
+      }
     })
 
     $(window).scroll(function() {
@@ -199,7 +202,7 @@
     }, function () {
       $('body').removeClass('overflow-hidden');
     });
-   
+
 
   });
 })(jQuery);

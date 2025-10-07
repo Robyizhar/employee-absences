@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\AttendanceLogs;
 use App\Models\Company;
+use App\Models\Employee;
+use App\Models\Department;
 use App\Repositories\FingerspotRepository;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
 
 class AbsenceController extends Controller
 {
@@ -21,7 +25,7 @@ class AbsenceController extends Controller
     }
 
     public function list(Request $request) {
-        $perPage = 10;
+        $perPage = 50;
         $lastId = $request->get('last_id', null);
 
         $query = AttendanceLogs::with(['employee', 'machine'])
@@ -37,6 +41,64 @@ class AbsenceController extends Controller
             'data' => $data,
             'hasMore' => $data->count() === $perPage
         ]);
+    }
+
+    public function recapitulation() {
+
+        $company_id = auth()->user()->company_id ?? null;
+
+        $departments = new Department;
+        if (!empty($company_id))
+            $departments->where('company_id', $company_id);
+
+        $departments = $departments->get();
+
+
+        return view('absence.recap', compact('departments'));
+    }
+
+    public function recapitulationList(Request $request)
+    {
+        $tz = config('app.absence_timezone', 'Asia/Jakarta');
+
+        $startDate = Carbon::parse($request->start_date ?? Carbon::now($tz)->startOfMonth())->startOfDay()->timezone('UTC');
+        $endDate   = Carbon::parse($request->end_date ?? Carbon::now($tz))->endOfDay()->timezone('UTC');
+
+        $query = DB::table('attendance_logs')
+            ->select(
+                'employees.id as employee_id',
+                'employees.name as employee_name',
+                'departments.name as department_name',
+                DB::raw("DATE(scan_time) as date"),
+                DB::raw("MIN(CASE WHEN status = 'IN' THEN scan_time END) as first_in"),
+                DB::raw("MAX(CASE WHEN status = 'OUT' THEN scan_time END) as last_out"),
+                DB::raw("SUM(late_minutes) as total_late"),
+                DB::raw("SUM(early_leave_minutes) as total_early")
+            )
+            ->join('employees', 'attendance_logs.employee_id', '=', 'employees.id')
+            ->leftJoin('departments', 'employees.department_id', '=', 'departments.id')
+            ->whereBetween('scan_time', [$startDate, $endDate])
+            ->where('attendance_logs.is_duplicate', false)
+            ->groupBy('employees.id', 'employees.name', 'departments.name', DB::raw("DATE(scan_time)"))
+            ->orderBy('departments.name')
+            ->orderBy('employees.name');
+
+        // if ($request->filled('employee_id')) {
+        //     $query->where('employees.id', $request->employee_id);
+        // }
+
+        if ($request->filled('employee_name')) {
+            $search = strtolower($request->employee_name);
+            $query->whereRaw('LOWER(employees.name) LIKE ?', ["%{$search}%"]);
+        }
+
+        if ($request->filled('department_id')) {
+            $query->where('departments.id', $request->department_id);
+        }
+
+        $data = $query->get();
+
+        return response()->json(['data' => $data]);
     }
 
     // public function refreshAbsences() {

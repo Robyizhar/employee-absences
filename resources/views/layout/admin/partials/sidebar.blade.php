@@ -27,11 +27,11 @@
                 </a>
                 <div class="collapse" id="absence">
                     <ul class="nav sub-menu">
-                        <li class="nav-item">
-                            <a href="{{ url('absence') }}" class="nav-link">Absence Log</a>
+                        <li class="nav-item ">
+                            <a href="{{ url('absence') }}" class="nav-link {{ Request::segment(1) == 'absence' ? 'active' : '' }}">Absence Log</a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ url('absence') }}" class="nav-link">Absence Recap</a>
+                        <li class="nav-item ">
+                            <a href="{{ url('absence/recapitulation') }}" class="nav-link {{ Request::segment(1) == 'absence' && Request::segment(1) == 'recapitulation' ? 'active' : '' }}">Absence Recap</a>
                         </li>
                     </ul>
                 </div>
