@@ -32,7 +32,8 @@
                         </table>
                     </div>
                     <div class="text-center mt-3">
-                        <button class="btn btn-outline-primary" id="load-more">Load More</button>
+                        {{-- <button class="btn btn-outline-primary" id="load-more">Load More</button> --}}
+                        <button class="btn btn-primary" id="load-more">Load More</button>
                     </div>
                 </div>
             </div>
@@ -89,7 +90,7 @@ let editMode = false;
 function loadData() {
     if (loading) return;
     loading = true;
-    $('#load-more').html('Loading...');
+    $('#load-more').html('<div class="loader"></div>');
 
     $.getJSON('/role/list', { last_id: lastId }, function(res) {
         let rows = '';
@@ -223,24 +224,36 @@ $(document).on('click', '.btn-edit', function() {
 
 // delete data
 $(document).on('click', '.btn-delete', function() {
-    if (!confirm('Yakin ingin menghapus role ini?')) return;
     let id = $(this).data('id');
-    showLoader();
-    $.ajax({
-        url: '/role/' + id,
-        type: 'DELETE',
-        data: { _token: '{{ csrf_token() }}' },
-        success: function(res) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Sukses!',
-                text: res.message
+    Swal.fire({
+        title: 'Yakin ingin menghapus?',
+        text: "Data ini akan dihapus permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            showLoader();
+            $.ajax({
+                url: '/role/' + id,
+                type: 'DELETE',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sukses!',
+                        text: res.message
+                    });
+                    $('#dTable tbody').html('');
+                    lastId = null;
+                    $('#load-more').show();
+                    loadData();
+                    hideLoader();
+                }
             });
-            $('#dTable tbody').html('');
-            lastId = null;
-            $('#load-more').show();
-            loadData();
-            hideLoader();
         }
     });
 });
