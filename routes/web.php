@@ -31,6 +31,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/recapitulation', [AbsenceController::class, 'recapitulation']);
         Route::get('/recapitulation/list', [AbsenceController::class, 'recapitulationList']);
+        Route::get('/recapitulation/export', [AbsenceController::class, 'export']);
+
+        // Route::get('/export', [AttendanceRecapController::class, 'export'])->name('attendance.export');
+
 
         // Route::get('/refresh', [AbsenceController::class, 'refreshAbsences']);
     });

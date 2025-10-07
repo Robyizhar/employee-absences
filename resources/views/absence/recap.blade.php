@@ -1,8 +1,32 @@
 @extends('layout.admin.app')
 
 @section('content')
-<div class="container">
-    <h4 class="mb-4">Rekapitulasi Absensi</h4>
+<div class="page-content">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
+        <div>
+            <h4 class="mb-3 mb-md-0">Rekapitulasi Absensi</h4>
+        </div>
+        <div class="d-flex align-items-center flex-wrap text-nowrap">
+            {{-- <div class="input-group date datepicker wd-200 me-2 mb-2 mb-md-0" id="dashboardDate">
+                <span class="input-group-text input-group-addon bg-transparent border-primary"><i data-feather="calendar" class=" text-primary"></i></span>
+                <input type="text" class="form-control border-primary bg-transparent">
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-icon-text me-2 mb-2 mb-md-0">
+                <i class="btn-icon-prepend" data-feather="printer"></i>
+                Print
+            </button> --}}
+            {{-- <button type="button" class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0  me-2">
+                <i class="btn-icon-prepend" data-feather="download-cloud"></i>
+                Download Report
+            </button>
+            <button type="button" class="btn btn-primary btn-icon-text mb-2 mb-md-0" id="refresh-btn">
+                <i class="btn-icon-prepend" data-feather="refresh-ccw"></i>
+                Refresh Data
+            </button> --}}
+        </div>
+    </div>
+    {{-- <h4 class="mb-4">Rekapitulasi Absensi</h4> --}}
 
     <div class="card mb-4">
         <div class="card-body">
@@ -32,6 +56,10 @@
                     <button type="submit" class="btn btn-primary">
                         <i data-feather="filter"></i> Tampilkan
                     </button>
+                    <button id="btnExport" class="btn btn-success">
+                        <i data-feather="file-text"></i> Export Excel
+                    </button>
+
                 </div>
             </form>
         </div>
@@ -96,6 +124,19 @@ $(document).ready(function () {
             feather.replace();
         });
     }
+
+    $('#btnExport').on('click', function () {
+        const btn = $(this);
+        btn.prop('disabled', true).text('Mempersiapkan file...');
+
+        setTimeout(() => {
+            const params = $('#filterForm').serialize();
+            const url = `/absence/recapitulation/export?${params}`;
+            window.open(url, '_blank');
+            btn.prop('disabled', false).text('Export Excel');
+        }, 3000);
+    });
+
 });
 </script>
 @endpush

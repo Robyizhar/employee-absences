@@ -10,6 +10,8 @@ use App\Models\Department;
 use App\Repositories\FingerspotRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Exports\AttendanceRecapExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class AbsenceController extends Controller
@@ -99,6 +101,13 @@ class AbsenceController extends Controller
         $data = $query->get();
 
         return response()->json(['data' => $data]);
+    }
+
+    public function export(Request $request) {
+
+        $filters = $request->only(['start_date', 'end_date', 'department_id', 'employee_name']);
+        $filename = 'rekap_absensi_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new AttendanceRecapExport($filters), $filename);
     }
 
     // public function refreshAbsences() {
