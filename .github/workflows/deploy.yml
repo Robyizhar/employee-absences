@@ -17,12 +17,16 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
-          extensions: mbstring, pdo, mysql
+          # extensions: mbstring, pdo, mysql
+          extensions: gd, mbstring, bcmath, pdo_pgsql, curl, zip, pdo, mysql
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Run Deployment Commands
         env:
