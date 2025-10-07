@@ -100,13 +100,24 @@ class FingerspotController extends Controller
                     // $scan = Carbon::parse($scanStr, $tz);
                     $scan_converted = Carbon::parse($scanStr, $tz)->setTimezone('UTC');
 
-                    $verificationMethod = match($statusScan) {
-                        0 => 'finger',
-                        1 => 'face',
-                        2 => 'password',
-                        3 => 'rfid',
-                        default => 'other'
-                    };
+                    switch ($statusScan) {
+                        case 0:
+                            $verificationMethod = 'finger';
+                            break;
+                        case 1:
+                            $verificationMethod = 'face';
+                            break;
+                        case 2:
+                            $verificationMethod = 'password';
+                            break;
+                        case 3:
+                            $verificationMethod = 'rfid';
+                            break;
+                        default:
+                            $verificationMethod = 'other';
+                            break;
+                    }
+
 
                      // duplicate detection
                     $dupThreshold = config('attendance.duplicate_threshold_seconds', 30);
@@ -115,7 +126,7 @@ class FingerspotController extends Controller
                     $endOfDay   = $scan_converted->copy()->setTimezone($tz)->endOfDay()->setTimezone('UTC');
                     $workStartLocal = config('attendance.work_start', '08:00:00');
 
-                    $last = AttendanceLogs::where('employee_id', $employee?->id ?? null)
+                    $last = AttendanceLogs::where('employee_id', $employee->id ?? null)
                         ->where('company_id', $company->id)
                         ->whereBetween('scan_time', [$startOfDay, $endOfDay])
                         ->orderBy('scan_time', 'desc')
@@ -208,9 +219,9 @@ class FingerspotController extends Controller
                     }
 
                     AttendanceLogs::create([
-                        'company_id' => $employee?->company_id ?? null,
-                        'machine_id' => $machine?->id ?? null,
-                        'employee_id' => $employee?->id ?? null,
+                        'company_id' => $employee->company_id ?? null,
+                        'machine_id' => $machine->id ?? null,
+                        'employee_id' => $employee->id ?? null,
                         'scan_time' => Carbon::parse($scan_converted, $tz)->timezone('UTC'),
                         'status' => $direction, // IN or OUT
                         'raw_payload' => $payload,
