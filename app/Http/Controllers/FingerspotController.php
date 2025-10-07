@@ -288,7 +288,6 @@ class FingerspotController extends Controller
         ];
 
         $result = $this->fingerspot->getAllPin($params);
-
         return response()->json($result);
     }
 }
