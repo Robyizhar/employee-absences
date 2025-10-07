@@ -83,7 +83,7 @@ class FingerspotController extends Controller
                         ->where('code', $data['cloud_id'])
                         ->first();
 
-                    $employee = Employee::where('employee_code', $pin)
+                    $employee = Employee::with('department')->where('employee_code', $pin)
                         ->where('company_id', $company->id)
                         ->first();
 
@@ -124,7 +124,9 @@ class FingerspotController extends Controller
 
                     $startOfDay = $scan_converted->copy()->setTimezone($tz)->startOfDay()->setTimezone('UTC');
                     $endOfDay   = $scan_converted->copy()->setTimezone($tz)->endOfDay()->setTimezone('UTC');
-                    $workStartLocal = config('attendance.work_start', '08:00:00');
+
+                    $workStartLocal = !empty($employee->department) ? $employee->department->start_time : config('attendance.work_start', '08:00:00');
+                    $workEndLocal = !empty($employee->department) ? $employee->department->end_time : config('attendance.work_end', '17:00:00');
 
                     $last = AttendanceLogs::where('employee_id', $employee->id ?? null)
                         ->where('company_id', $company->id)
@@ -192,8 +194,8 @@ class FingerspotController extends Controller
                     }
 
                      // Work start/end for that day
-                    $workStart = Carbon::parse($scan_converted->toDateString() . ' ' . config('attendance.work_start', '08:00:00'), $tz);
-                    $workEnd = Carbon::parse($scan_converted->toDateString() . ' ' . config('attendance.work_end', '17:00:00'), $tz);
+                    $workStart = Carbon::parse($scan_converted->toDateString() . ' ' . $workStartLocal, $tz);
+                    $workEnd = Carbon::parse($scan_converted->toDateString() . ' ' . $workEndLocal, $tz);
 
                     $lateSeconds = null;
                     $earlySeconds = null;
@@ -227,10 +229,10 @@ class FingerspotController extends Controller
                         'raw_payload' => $payload,
                         'verification_method' => $verificationMethod,
                         'is_duplicate' => false,
-                        'late_seconds' => $lateSeconds,
-                        'late_minutes' => $lateMinutes,
-                        'early_seconds' => $earlySeconds,
-                        'early_leave_minutes' => $earlyMinutes,
+                        'late_seconds' => abs($lateSeconds),
+                        'late_minutes' => abs($lateMinutes),
+                        'early_seconds' => abs($earlySeconds),
+                        'early_leave_minutes' => abs($earlyMinutes),
                     ]);
 
                     return true;

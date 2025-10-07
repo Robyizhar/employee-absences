@@ -89,9 +89,10 @@
             if (res.data.length > 0) {
                 $('#dTable tbody').empty();
                 $.each(res.data, function(i, log) {
-                    console.log('log.scan_time', log.scan_time);
+                    console.log(log.employee.name, log.late_minutes);
 
-                    rows += `<tr>
+                    rows += `
+                    <tr>
                         <td>${log.id}</td>
                         <td>${log.employee ? log.employee.name : '-'}</td>
                         <td>
@@ -105,10 +106,41 @@
                                 second: "2-digit"
                             })}
                         </td>
-                        <td>${log.status}</td>
+                        <td>
+                            <span class="badge ${log.status === 'IN' ? 'bg-success' : 'bg-warning'}">
+                            ${log.status}
+                            </span>
+                        </td>
                         <td>${log.machine ? log.machine.serial_number : '-'}</td>
+                        <td>
+                            ${(() => {
+                                let text = "";
+                                if (log.is_duplicate) {
+                                    text += `<span class="badge bg-secondary">Duplicate</span><br>`;
+                                }
 
+                                // Tampilkan status keterlambatan atau pulang cepat
+                                // if (log.late_seconds && log.late_seconds > 0) {
+                                //     text += `<span class="badge bg-danger">Terlambat ${Math.ceil(log.late_seconds / 60)} menit</span><br>`;
+                                // } else if (log.early_seconds && log.early_seconds > 0) {
+                                //     text += `<span class="badge bg-info text-dark">Datang cepat ${Math.ceil(log.early_seconds / 60)} menit</span><br>`;
+                                // }
+
+                                if (log.late_minutes && log.late_minutes > 0) {
+                                    const duration = formatMinutes(log.late_minutes);
+                                    text += `<span class="badge bg-danger">Terlambat ${duration}</span><br>`;
+                                }
+
+                                if (log.early_leave_minutes && log.early_leave_minutes > 0) {
+                                    const duration = formatMinutes(log.early_leave_minutes);
+                                    text += `<span class="badge bg-warning text-dark">Pulang cepat ${duration}</span>`;
+                                }
+
+                                return text || '-';
+                            })()}
+                        </td>
                     </tr>`;
+
                 });
                 $('#dTable tbody').append(rows);
 
@@ -129,6 +161,22 @@
     });
 
     loadAbsences();
+
+    function formatMinutes(minutes) {
+        minutes = Math.abs(minutes || 0); // pastikan positif dan tidak null
+
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+
+        let parts = [];
+        if (h > 0) parts.push(`${h} jam`);
+        if (m > 0) parts.push(`${m} menit`);
+        if (parts.length === 0) parts.push('0 menit');
+
+        return parts.join(' ');
+    }
+
+
 
     // $('#refresh-btn').click(function() {
     //     let btn = $(this);
