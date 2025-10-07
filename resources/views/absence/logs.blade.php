@@ -57,9 +57,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <!-- <tr>
                                         <td class="pt-0" colspan="5">Data Kosong</td>
-                                    </tr>
+                                    </tr> -->
                                 </tbody>
                             </table>
                         </div>
@@ -87,7 +87,7 @@
         $.getJSON('/absence/list', { last_id: lastId }, function(res) {
             let rows = '';
             if (res.data.length > 0) {
-                $('#dTable tbody').empty();
+
                 $.each(res.data, function(i, log) {
                     console.log(log.employee.name, log.late_minutes);
 
@@ -177,6 +177,8 @@
     }
 
     $(document).on('click', '#refresh-btn', async function () {
+        $('#dTable tbody').empty();
+        $('#load-more').show();
         let btn = $(this);
 
         btn.prop('disabled', true).html('<i data-feather="loader" class="spin"></i> Refreshing...');
@@ -222,6 +224,3 @@
 
 </script>
 @endpush
-
-
-

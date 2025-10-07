@@ -29,10 +29,10 @@ class AbsenceController extends Controller
         $lastId = $request->get('last_id', null);
 
         $query = AttendanceLogs::with(['employee', 'machine'])
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
 
         if ($lastId) {
-            $query->where('id', '>', $lastId);
+            $query->where('id', '<', $lastId);
         }
 
         $data = $query->take($perPage)->get();
