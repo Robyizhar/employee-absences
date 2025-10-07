@@ -1,71 +1,132 @@
 @extends('layout.admin.app')
+@push('style')
+<link rel="stylesheet" href="{{ url("assets/vendors/sweetalert2/sweetalert2.min.css") }}">
+@endpush
 
 @section('content')
 <div class="page-content">
     <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
         <div>
-            <h4 class="mb-3 mb-md-0">Company Page</h4>
+            <h4 class="mb-3 mb-md-0">Department Page</h4>
         </div>
         <div class="d-flex align-items-center flex-wrap text-nowrap">
-            {{-- <div class="input-group date datepicker wd-200 me-2 mb-2 mb-md-0" id="dashboardDate">
-                <span class="input-group-text input-group-addon bg-transparent border-primary"><i data-feather="calendar" class=" text-primary"></i></span>
-                <input type="text" class="form-control border-primary bg-transparent">
-            </div>
-            <button type="button" class="btn btn-outline-primary btn-icon-text me-2 mb-2 mb-md-0">
-                <i class="btn-icon-prepend" data-feather="printer"></i>
-                Print
+            <button type="button" class="btn btn-primary btn-icon-text mb-2 mb-md-0" id="btnAddDepartment">
+                <i class="btn-icon-prepend" data-feather="plus"></i> Tambah Department
             </button>
-            <button type="button" class="btn btn-primary btn-icon-text mb-2 mb-md-0">
-                <i class="btn-icon-prepend" data-feather="download-cloud"></i>
-                Download Report
-            </button> --}}
         </div>
     </div>
+
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
             <div class="card">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-baseline mb-2">
-                            <h6 class="card-title mb-0">Projects</h6>
-                            <div class="dropdown mb-2">
-                            <button class="btn p-0" type="button" id="dropdownMenuButton7" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton7">
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="eye" class="icon-sm me-2"></i> <span class="">View</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="edit-2" class="icon-sm me-2"></i> <span class="">Edit</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="trash" class="icon-sm me-2"></i> <span class="">Delete</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="printer" class="icon-sm me-2"></i> <span class="">Print</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="download" class="icon-sm me-2"></i> <span class="">Download</span></a>
-                            </div>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="dTable">
-                                <thead>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-baseline mb-2">
+                        <h6 class="card-title mb-0">Daftar Department</h6>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="dTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama</th>
+                                    <th>Perusahaan</th>
+                                    <th>Kode</th>
+                                    <th>Jam Masuk</th>
+                                    <th>Jam Keluar</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{-- @foreach(App\Models\Department::with('company')->get() as $dept)
                                     <tr>
-                                        <th class="pt-0">ID</th>
-                                        <th class="pt-0">Nama</th>
-                                        <th class="pt-0">Kode Perusahaan</th>
-                                        <th class="pt-0">Jam Masuk</th>
-                                        <th class="pt-0">Jam Keluar</th>
+                                        <td>{{ $dept->id }}</td>
+                                        <td>{{ $dept->name }}</td>
+                                        <td>{{ $dept->company->name ?? '-' }}</td>
+                                        <td>{{ $dept->code ?? '-' }}</td>
+                                        <td>{{ $dept->start_time }}</td>
+                                        <td>{{ $dept->end_time }}</td>
+                                        <td>
+                                            <form action="{{ route('department.destroy', $dept->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">
+                                                    <i data-feather="trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                        <div class="text-center mt-3">
-                            <button class="btn btn-primary" id="load-more">Load More</button>
-                        </div>
+                                @endforeach --}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <button class="btn btn-outline-primary" id="load-more">Load More</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="departmentModal" tabindex="-1" aria-labelledby="departmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form id="departmentForm" action="{{ route('department.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="id" id="department_id">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="departmentModalLabel">Tambah Department</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Nama Department</label>
+                            <input type="text" name="name" id="name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="company_id" class="form-label">Perusahaan</label>
+                            <select name="company_id" id="company_id" class="form-select" required>
+                                <option value="">-- Pilih Perusahaan --</option>
+                                @foreach($companies as $company)
+                                    <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="code" class="form-label">Kode Department</label>
+                            <input type="text" name="code" id="code" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="start_time" class="form-label">Jam Masuk</label>
+                            <input type="time" name="start_time" id="start_time" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="end_time" class="form-label">Jam Keluar</label>
+                            <input type="time" name="end_time" id="end_time" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" id="btnSubmit" class="btn btn-primary">Simpan</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
 @push('script')
+<script src="{{ url("assets/vendors/sweetalert2/sweetalert2.min.js") }}"></script>
+
 <script>
     let lastId = null;
     let loading = false;
@@ -80,12 +141,32 @@
                 rows += `<tr>
                     <td>${user.id}</td>
                     <td>${user.name}</td>
+                    <td>${user.company.name}</td>
                     <td>${user.code}</td>
                     <td>${user.start_time}</td>
                     <td>${user.end_time}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-warning btn-edit edit-data"
+                                data-id="${user.id}"
+                                data-name="${user.name}"
+                                data-company_id="${user.company_id}"
+                                data-code="${user.code}"
+                                data-start_time="${user.start_time}"
+                                data-end_time="${user.end_time}">
+                                <i data-feather="edit" width="10" height="10"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger btn-delete delete-data ml-2"
+                                data-id="${user.id}">
+                                <i data-feather="delete" width="10" height="10"></i>
+                            </button>
+                        </div>
+                    </td>
                 </tr>`;
             });
             $('#dTable tbody').append(rows);
+
+            feather.replace();
 
             // update lastId
             if (res.data.length > 0) {
@@ -108,6 +189,103 @@
 
     // load awal
     loadData();
+
+    // === Mode Tambah ===
+    $(document).on('click', '#btnAddDepartment', function() {
+        // reset form
+        $('#departmentForm')[0].reset();
+        $('#department_id').val('');
+
+        // ubah title & action
+        $('#departmentModalLabel').text('Tambah Department');
+        $('#btnSubmit').text('Simpan');
+
+        // ubah action ke store
+        $('#departmentForm').attr('action', '{{ route("department.store") }}');
+        $('#departmentForm').attr('method', 'POST');
+
+        $('#departmentModal').modal('show');
+    });
+
+
+    // === Mode Edit ===
+    $(document).on('click', '.edit-data', function() {
+        const data = $(this).data();
+
+        // isi form dengan data lama
+        $('#department_id').val(data.id);
+        $('#name').val(data.name);
+        $('#company_id').val(data.company_id);
+        $('#code').val(data.code);
+        $('#start_time').val(data.start_time);
+        $('#end_time').val(data.end_time);
+
+        // ubah title & action
+        $('#departmentModalLabel').text('Edit Department');
+        $('#btnSubmit').text('Update');
+
+        // ganti action ke update route
+        let updateUrl = `/department/update/${data.id}`;
+        $('#departmentForm').attr('action', updateUrl);
+        $('#departmentForm').attr('method', 'POST');
+
+        // $('#company_id').attr(data.company_id);
+
+
+        $('#departmentModal').modal('show');
+    });
+
+    $(document).on('click', '.delete-data', function(e) {
+        e.preventDefault();
+
+        const id = $(this).data('id');
+        const row = $(this).closest('tr'); // untuk hapus baris dari tabel
+
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data department ini akan dihapus permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/department/${id}`,
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(res) {
+                        if (res.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Terhapus!',
+                                text: res.message,
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+
+                            // hapus baris dari tabel tanpa reload
+                            row.fadeOut(400, function() {
+                                $(this).remove();
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: 'Terjadi kesalahan saat menghapus data.'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
 
 </script>
 @endpush

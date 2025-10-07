@@ -34,6 +34,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DepartmentController::class, 'index']);
         Route::get('/list', [DepartmentController::class, 'list']);
         // Route::get('/refresh', [DepartmentController::class, 'refreshEmployees']);
+        Route::post('/store', [DepartmentController::class, 'store'])->name('department.store');
+        Route::post('/update/{department}', [DepartmentController::class, 'update'])->name('department.update');
+        Route::delete('/delete/{department}', [DepartmentController::class, 'destroy'])->name('department.destroy');
     });
 
 });
