@@ -142,23 +142,10 @@ class FingerspotController extends Controller
 
 
                     if ($last) {
-                        if (
-                            $last->scan_time->diffInSeconds($scan_converted) <= $dupThreshold
-                        ) {
-                            AttendanceLogs::create([
-                                'company_id' => $company->id,
-                                'machine_id' => $machine->id,
-                                'employee_id' => $employee->id,
-                                'scan_time' => $scan_converted,
-                                'status' => $last->status, // keep last status, or set set null
-                                'raw_payload' => $payload,
-                                'verification_method' => $verificationMethod,
-                                'is_duplicate' => true,
-                            ]);
+                        if ($last->scan_time->diffInSeconds($scan_converted) <= $dupThreshold)
                             return true;
-                        }
 
-                        if ($last->scan_time->lessThan($workStart)) {
+                        if ($scan_converted->lessThan($workStart)) {
                             AttendanceLogs::create([
                                 'company_id' => $company->id,
                                 'machine_id' => $machine->id,
@@ -169,20 +156,8 @@ class FingerspotController extends Controller
                                 'verification_method' => $verificationMethod,
                                 'is_duplicate' => true,
                             ]);
-                        } else {
-                            AttendanceLogs::create([
-                                'company_id' => $company->id,
-                                'machine_id' => $machine->id,
-                                'employee_id' => $employee->id,
-                                'scan_time' => $scan_converted,
-                                'status' => 'OUT',
-                                'raw_payload' => $payload,
-                                'verification_method' => $verificationMethod,
-                                'is_duplicate' => true,
-                            ]);
+                            return true;
                         }
-
-                        return true;
                     }
 
                     // Determine new attendance direction (IN / OUT) by alternation per day:

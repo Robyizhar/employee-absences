@@ -28,7 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('absence')->group(function () {
         Route::get('/', [AbsenceController::class, 'index']);
         Route::get('/list', [AbsenceController::class, 'list']);
-        // Route::get('/refresh', [AbsenceController::class, 'refreshEmployees']);
+        // Route::get('/refresh', [AbsenceController::class, 'refreshAbsences']);
     });
 
     Route::prefix('department')->group(function () {

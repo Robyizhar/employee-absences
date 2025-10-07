@@ -176,30 +176,48 @@
         return parts.join(' ');
     }
 
+    $(document).on('click', '#refresh-btn', async function () {
+        let btn = $(this);
+
+        btn.prop('disabled', true).html('<i data-feather="loader" class="spin"></i> Refreshing...');
+        feather.replace();
+
+        lastId = null;
+
+        try {
+            await loadAbsences();
+            btn.prop('disabled', false).html('<i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Refresh Data');
+            feather.replace();
+        } catch (error) {
+            console.error(error);
+        }
+
+    });
+
 
 
     // $('#refresh-btn').click(function() {
-    //     let btn = $(this);
-    //     btn.prop('disabled', true).html('<i data-feather="loader" class="spin"></i> Refreshing...');
+        // let btn = $(this);
+        // btn.prop('disabled', true).html('<i data-feather="loader" class="spin"></i> Refreshing...');
 
-    //     $.ajax({
-    //         url: '/absence/refresh',
-    //         type: 'GET',
-    //         success: function(res) {
-    //             console.log(res);
-    //             btn.prop('disabled', false).html('<i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Refresh Data');
-    //             feather.replace(); // refresh icon feather
-    //             setTimeout(function() {
-    //                 lastId = null;
-    //                 loadAbsences();
-    //             }, 3000);
-    //         },
-    //         error: function() {
-    //             alert('Gagal refresh data!');
-    //             btn.prop('disabled', false).html('<i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Refresh Data');
-    //             feather.replace();
-    //         }
-    //     });
+        // $.ajax({
+        //     url: '/absence/refresh',
+        //     type: 'GET',
+        //     success: function(res) {
+        //         console.log(res);
+        //         btn.prop('disabled', false).html('<i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Refresh Data');
+        //         feather.replace(); // refresh icon feather
+        //         setTimeout(function() {
+        //             lastId = null;
+        //             loadAbsences();
+        //         }, 3000);
+        //     },
+        //     error: function() {
+        //         alert('Gagal refresh data!');
+        //         btn.prop('disabled', false).html('<i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Refresh Data');
+        //         feather.replace();
+        //     }
+        // });
     // });
 
 </script>
