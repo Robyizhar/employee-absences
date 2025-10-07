@@ -39,7 +39,7 @@
             @if (Auth::user()->getRoleNames()[0] == 'Maintener' || Auth::user()->hasAnyPermission(['master_employees']))
             <li class="nav-item {{ Request::segment(1) == 'employee' ? 'active' : '' }}">
                 <a href="{{ url('employee') }}" class="nav-link">
-                    <i class="link-icon" data-feather="box"></i>
+                    <i class="link-icon" data-feather="users"></i>
                     <span class="link-title">Employees</span>
                 </a>
             </li>
@@ -47,7 +47,7 @@
             @if (Auth::user()->getRoleNames()[0] == 'Maintener' || Auth::user()->hasAnyPermission(['master_companies']))
             <li class="nav-item {{ Request::segment(1) == 'company' ? 'active' : '' }}">
                 <a href="{{ url('company') }}" class="nav-link ">
-                    <i class="link-icon" data-feather="box"></i>
+                    <i class="link-icon" data-feather="home"></i>
                     <span class="link-title">Companies</span>
                 </a>
             </li>
@@ -55,15 +55,42 @@
             @if (Auth::user()->getRoleNames()[0] == 'Maintener' || Auth::user()->hasAnyPermission(['master_companies']))
             <li class="nav-item {{ Request::segment(1) == 'department' ? 'active' : '' }}">
                 <a href="{{ url('department') }}" class="nav-link ">
-                    <i class="link-icon" data-feather="box"></i>
+                    <i class="link-icon" data-feather="hard-drive"></i>
                     <span class="link-title">Departement</span>
                 </a>
             </li>
             @endif
+
+            @if (Auth::user()->getRoleNames()[0] == 'Maintener' || Auth::user()->hasAnyPermission(['setting']))
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#settings" role="button" aria-expanded="false" aria-controls="settings">
+                    <i class="link-icon" data-feather="settings"></i>
+                        <span class="link-title">Pengaturan</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse" id="settings">
+                    <ul class="nav sub-menu">
+                        <li class="nav-item ">
+                            <a href="#" class="nav-link">Pengguna</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a href="#" class="nav-link">Role</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a href="#" class="nav-link">Hak Akses</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            @endif
+
+
+
+            {{-- setting --}}
         </ul>
     </div>
 </nav>
-<nav class="settings-sidebar">
+{{-- <nav class="settings-sidebar">
     <div class="sidebar-body">
         <a href="#" class="settings-sidebar-toggler">
             <i data-feather="settings"></i>
@@ -94,4 +121,4 @@
             </a>
         </div>
     </div>
-</nav>
+</nav> --}}
