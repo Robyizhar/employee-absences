@@ -28,4 +28,43 @@
     });
 </script>
 
+<script>
+(function($){
+    // Fungsi manual
+
+    // function showLoader () {
+    //     $('#page-loader').removeClass('d-none');
+    // }
+    // function hideLoader () {
+    //     $('#page-loader').addClass('d-none');
+    // }
+
+
+    window.showLoader = function() {
+        $('#page-loader').removeClass('d-none');
+        $('body').addClass('loader-active');
+    };
+    window.hideLoader = function() {
+        $('#page-loader').addClass('d-none');
+        $('body').removeClass('loader-active');
+    };
+
+    // // HANYA untuk request dengan loader: true
+    // $(document).on('ajaxSend', function(e, xhr, settings){
+    //     if (settings.loader === true) {
+    //     xhr._useLoader = true;
+    //     showLoader();
+    //     }
+    // });
+
+    // // Sembunyikan hanya untuk request yang pakai loader
+    // $(document).on('ajaxComplete ajaxError', function(e, xhr){
+    //     if (xhr._useLoader) {
+    //     hideLoader();
+    //     xhr._useLoader = false;
+    //     }
+    // });
+})(jQuery);
+</script>
+
 @stack('script')

@@ -89,7 +89,6 @@
             if (res.data.length > 0) {
 
                 $.each(res.data, function(i, log) {
-                    console.log(log.employee.name, log.late_minutes);
 
                     rows += `
                     <tr>
@@ -118,13 +117,6 @@
                                 if (log.is_duplicate) {
                                     text += `<span class="badge bg-secondary">Duplicate</span><br>`;
                                 }
-
-                                // Tampilkan status keterlambatan atau pulang cepat
-                                // if (log.late_seconds && log.late_seconds > 0) {
-                                //     text += `<span class="badge bg-danger">Terlambat ${Math.ceil(log.late_seconds / 60)} menit</span><br>`;
-                                // } else if (log.early_seconds && log.early_seconds > 0) {
-                                //     text += `<span class="badge bg-info text-dark">Datang cepat ${Math.ceil(log.early_seconds / 60)} menit</span><br>`;
-                                // }
 
                                 if (log.late_minutes && log.late_minutes > 0) {
                                     const duration = formatMinutes(log.late_minutes);

@@ -65,28 +65,24 @@
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#settings" role="button" aria-expanded="false" aria-controls="settings">
                     <i class="link-icon" data-feather="settings"></i>
-                        <span class="link-title">Pengaturan</span>
+                        <span class="link-title">Setting</span>
                     <i class="link-arrow" data-feather="chevron-down"></i>
                 </a>
                 <div class="collapse" id="settings">
                     <ul class="nav sub-menu">
                         <li class="nav-item ">
-                            <a href="#" class="nav-link">Pengguna</a>
+                            <a href="#" class="nav-link">Users</a>
                         </li>
                         <li class="nav-item ">
-                            <a href="#" class="nav-link">Role</a>
+                            <a href="{{ url('role') }}" class="nav-link {{ Request::segment(1) == 'role' ? 'active' : '' }}">Role</a>
                         </li>
                         <li class="nav-item ">
-                            <a href="#" class="nav-link">Hak Akses</a>
+                            <a href="{{ url('permission') }}" class="nav-link {{ Request::segment(1) == 'permission' ? 'active' : '' }}">Permission</a>
                         </li>
                     </ul>
                 </div>
             </li>
             @endif
-
-
-
-            {{-- setting --}}
         </ul>
     </div>
 </nav>

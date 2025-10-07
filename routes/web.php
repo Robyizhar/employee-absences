@@ -8,6 +8,8 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
@@ -32,10 +34,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/recapitulation', [AbsenceController::class, 'recapitulation']);
         Route::get('/recapitulation/list', [AbsenceController::class, 'recapitulationList']);
         Route::get('/recapitulation/export', [AbsenceController::class, 'export']);
-
-        // Route::get('/export', [AttendanceRecapController::class, 'export'])->name('attendance.export');
-
-
         // Route::get('/refresh', [AbsenceController::class, 'refreshAbsences']);
     });
 
@@ -46,6 +44,21 @@ Route::middleware('auth')->group(function () {
         Route::post('/store', [DepartmentController::class, 'store'])->name('department.store');
         Route::post('/update/{department}', [DepartmentController::class, 'update'])->name('department.update');
         Route::delete('/delete/{department}', [DepartmentController::class, 'destroy'])->name('department.destroy');
+    });
+
+    Route::prefix('permission')->group(function () {
+        Route::get('/', [PermissionController::class, 'index'])->name('permission');
+        Route::get('/list', [PermissionController::class, 'list']);
+        // Route::put('/{permission}', [PermissionController::class, 'update'])->name('employee.update');
+    });
+
+    Route::prefix('role')->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('role');
+        Route::get('/list', [RoleController::class, 'list']);
+        Route::post('/', [RoleController::class, 'store']);
+        Route::get('/{role}', [RoleController::class, 'show']);
+        Route::put('/{role}', [RoleController::class, 'update']);
+        Route::delete('/{role}', [RoleController::class, 'destroy']);
     });
 
 });

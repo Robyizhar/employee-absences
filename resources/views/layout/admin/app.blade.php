@@ -36,6 +36,15 @@
 		</div>
 	</div>
 
+    <div id="page-loader" aria-hidden="true" class="d-none">
+        <!-- Jika mau benar-benar blank: hapus .loader-inner atau kosongkan isinya -->
+        <div class="loader-inner" role="status" aria-label="Loading">
+            <!-- Opsi spinner kecil (hapus jika tidak diperlukan) -->
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+
 
     @include('layout.admin.partials.script')
 	<!-- End custom js for this page -->
