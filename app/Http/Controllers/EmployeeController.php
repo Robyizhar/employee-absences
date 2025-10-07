@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\Employee;
+use App\Models\Department;
 use App\Repositories\FingerspotRepository;
 
 class EmployeeController extends Controller
@@ -16,7 +17,8 @@ class EmployeeController extends Controller
     }
 
     public function index() {
-        return view('employee.index');
+        $departments = Department::all();
+        return view('employee.index', compact('departments'));
     }
 
     public function list(Request $request) {
@@ -54,4 +56,20 @@ class EmployeeController extends Controller
         // \Log::info($codes);
         return response()->json($codes, 200);
     }
+
+    public function update(Request $request, Employee $employee) {
+        $request->validate([
+            'department_id' => 'required|exists:departments,id',
+        ]);
+
+        $employee->update([
+            'department_id' => $request->department_id
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Department karyawan berhasil diperbarui.'
+        ]);
+    }
+
 }

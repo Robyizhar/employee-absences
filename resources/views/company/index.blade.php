@@ -70,6 +70,8 @@
     let loading = false;
 
     function loadUsers() {
+        $('#load-more').html('<div class="loader"></div>');
+
         if (loading) return;
         loading = true;
 
@@ -100,7 +102,7 @@
     }
 
     $('#load-more').click(function() {
-        $(this).html('<div class="loader"></div>');
+        // $(this).html('<div class="loader"></div>');
         loadUsers();
     });
 

@@ -22,6 +22,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [EmployeeController::class, 'index'])->name('employee');
         Route::get('/list', [EmployeeController::class, 'list']);
         Route::get('/refresh', [EmployeeController::class, 'refreshEmployees']);
+        Route::put('/{employee}', [EmployeeController::class, 'update'])->name('employee.update');
     });
 
     Route::prefix('absence')->group(function () {
