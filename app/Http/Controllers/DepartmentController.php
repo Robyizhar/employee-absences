@@ -40,9 +40,13 @@ class DepartmentController extends Controller
             'end_time'   => 'required',
         ]);
 
-        Department::create($request->all());
+        $department = Department::create($request->all());
 
-        return redirect()->back()->with('success', 'Department created successfully.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Department created successfully.',
+            'data' => $department
+        ]);
     }
 
     public function update(Request $request, Department $department) {
@@ -56,11 +60,19 @@ class DepartmentController extends Controller
 
         $department->update($request->all());
 
-        return redirect()->back()->with('success', 'Department updated successfully.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Department updated successfully.',
+            'data' => $department
+        ]);
     }
 
     public function destroy(Department $department) {
         $department->delete();
-        return redirect()->back()->with('success', 'Department deleted successfully.');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Department deleted successfully.'
+        ]);
     }
 }

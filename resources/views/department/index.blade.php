@@ -11,7 +11,7 @@
         </div>
         <div class="d-flex align-items-center flex-wrap text-nowrap">
             <button type="button" class="btn btn-primary btn-icon-text mb-2 mb-md-0" id="btnAddDepartment">
-                <i class="btn-icon-prepend" data-feather="plus"></i> Tambah Department
+                <i class="btn-icon-prepend" data-feather="plus"></i> Add Department
             </button>
         </div>
     </div>
@@ -21,7 +21,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-baseline mb-2">
-                        <h6 class="card-title mb-0">Daftar Department</h6>
+                        <h6 class="card-title mb-0">Department List</h6>
                     </div>
 
                     <div class="table-responsive">
@@ -29,34 +29,16 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Nama</th>
-                                    <th>Perusahaan</th>
-                                    <th>Kode</th>
-                                    <th>Jam Masuk</th>
-                                    <th>Jam Keluar</th>
-                                    <th>Aksi</th>
+                                    <th>Name</th>
+                                    <th>Company</th>
+                                    <th>Code</th>
+                                    <th>Check-in Time</th>
+                                    <th>Check-out Time</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @foreach(App\Models\Department::with('company')->get() as $dept)
-                                    <tr>
-                                        <td>{{ $dept->id }}</td>
-                                        <td>{{ $dept->name }}</td>
-                                        <td>{{ $dept->company->name ?? '-' }}</td>
-                                        <td>{{ $dept->code ?? '-' }}</td>
-                                        <td>{{ $dept->start_time }}</td>
-                                        <td>{{ $dept->end_time }}</td>
-                                        <td>
-                                            <form action="{{ route('department.destroy', $dept->id) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">
-                                                    <i data-feather="trash"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach --}}
+
                             </tbody>
                         </table>
                     </div>
@@ -77,20 +59,20 @@
             <input type="hidden" name="id" id="department_id">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="departmentModalLabel">Tambah Department</h5>
+                    <h5 class="modal-title" id="departmentModalLabel">Add Department</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="name" class="form-label">Nama Department</label>
+                            <label for="name" class="form-label">Department Name</label>
                             <input type="text" name="name" id="name" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="company_id" class="form-label">Perusahaan</label>
+                            <label for="company_id" class="form-label">Company</label>
                             <select name="company_id" id="company_id" class="form-select" required>
-                                <option value="">-- Pilih Perusahaan --</option>
+                                <option value="">-- Select Company --</option>
                                 @foreach($companies as $company)
                                     <option value="{{ $company->id }}">{{ $company->name }}</option>
                                 @endforeach
@@ -100,23 +82,23 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="code" class="form-label">Kode Department</label>
+                            <label for="code" class="form-label">Department Code</label>
                             <input type="text" name="code" id="code" class="form-control" required>
                         </div>
                         <div class="col-md-3">
-                            <label for="start_time" class="form-label">Jam Masuk</label>
+                            <label for="start_time" class="form-label">Check-in Time</label>
                             <input type="time" name="start_time" id="start_time" class="form-control" required>
                         </div>
                         <div class="col-md-3">
-                            <label for="end_time" class="form-label">Jam Keluar</label>
+                            <label for="end_time" class="form-label">Check Out Time</label>
                             <input type="time" name="end_time" id="end_time" class="form-control" required>
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" id="btnSubmit" class="btn btn-primary">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" id="btnSubmit" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </form>
@@ -125,17 +107,23 @@
 
 @endsection
 @push('script')
-<script src="{{ url("assets/vendors/sweetalert2/sweetalert2.min.js") }}"></script>
+<script src="{{ url('assets/vendors/sweetalert2/sweetalert2.min.js') }}"></script>
 
 <script>
     let lastId = null;
     let loading = false;
 
-    function loadData() {
-        $('#load-more').html('<div class="loader"></div>');
-
+    function loadData(reset = false) {
         if (loading) return;
         loading = true;
+
+        if (reset) {
+            $('#dTable tbody').empty();
+            lastId = null;
+            $('#load-more').show();
+        }
+
+        $('#load-more').html('<div class="spinner-border spinner-border-sm"></div>');
 
         $.getJSON('/department/list', { last_id: lastId }, function(res) {
             let rows = '';
@@ -149,72 +137,58 @@
                     <td>${user.end_time}</td>
                     <td>
                         <div class="btn-group">
-                            <button class="btn btn-sm btn-warning btn-edit edit-data"
+                            <button class="btn btn-sm btn-warning edit-data"
                                 data-id="${user.id}"
                                 data-name="${user.name}"
                                 data-company_id="${user.company_id}"
                                 data-code="${user.code}"
                                 data-start_time="${user.start_time}"
                                 data-end_time="${user.end_time}">
-                                <i data-feather="edit" width="10" height="10"></i>
+                                <i data-feather="edit"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger btn-delete delete-data ml-2"
+                            <button class="btn btn-sm btn-danger delete-data ms-2"
                                 data-id="${user.id}">
-                                <i data-feather="delete" width="10" height="10"></i>
+                                <i data-feather="trash-2"></i>
                             </button>
                         </div>
                     </td>
                 </tr>`;
             });
             $('#dTable tbody').append(rows);
-
             feather.replace();
 
-            // update lastId
             if (res.data.length > 0) {
                 lastId = res.data[res.data.length - 1].id;
             }
 
-            // hide button kalau tidak ada lagi
             if (!res.hasMore) {
                 $('#load-more').hide();
             }
-            $('#load-more').html('Load More');
+
+            $('#load-more').text('Load More');
             loading = false;
         });
     }
 
-    $('#load-more').click(function() {
-        // $(this).html('<div class="loader"></div>');
-        loadData();
-    });
-
-    // load awal
+    // Load awal
     loadData();
 
-    // === Mode Tambah ===
+    $('#load-more').click(() => loadData());
+
+    // === Tambah Department ===
     $(document).on('click', '#btnAddDepartment', function() {
-        // reset form
         $('#departmentForm')[0].reset();
         $('#department_id').val('');
-
-        // ubah title & action
         $('#departmentModalLabel').text('Tambah Department');
-        $('#btnSubmit').text('Simpan');
-
-        // ubah action ke store
-        $('#departmentForm').attr('action', '{{ route("department.store") }}');
-        $('#departmentForm').attr('method', 'POST');
-
+        $('#btnSubmit').text('Save');
+        $('#departmentForm').attr('data-mode', 'create');
         $('#departmentModal').modal('show');
     });
 
-
-    // === Mode Edit ===
+    // === Edit Department ===
     $(document).on('click', '.edit-data', function() {
         const data = $(this).data();
 
-        // isi form dengan data lama
         $('#department_id').val(data.id);
         $('#name').val(data.name);
         $('#company_id').val(data.company_id);
@@ -222,61 +196,106 @@
         $('#start_time').val(data.start_time);
         $('#end_time').val(data.end_time);
 
-        // ubah title & action
         $('#departmentModalLabel').text('Edit Department');
         $('#btnSubmit').text('Update');
-
-        // ganti action ke update route
-        let updateUrl = `/department/update/${data.id}`;
-        $('#departmentForm').attr('action', updateUrl);
-        $('#departmentForm').attr('method', 'POST');
-
-        // $('#company_id').attr(data.company_id);
-
-
+        $('#departmentForm').attr('data-mode', 'update');
         $('#departmentModal').modal('show');
     });
 
+    // === Submit Form via AJAX ===
+    $('#departmentForm').on('submit', function(e) {
+        e.preventDefault();
+
+        const mode = $(this).attr('data-mode');
+        const id = $('#department_id').val();
+
+        const formData = $(this).serialize();
+        let url = '';
+        let method = 'POST';
+
+        if (mode === 'create') {
+            url = '{{ route("department.store") }}';
+        } else {
+            url = `/department/update/${id}`;
+        }
+
+        $('#btnSubmit').prop('disabled', true).html('<div class="spinner-border spinner-border-sm"></div>');
+
+        $.ajax({
+            url: url,
+            type: method,
+            data: formData,
+            success: function(res) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: mode === 'create'
+                        ? 'Department berhasil ditambahkan.'
+                        : 'Department berhasil diperbarui.',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                $('#departmentModal').modal('hide');
+                $('#btnSubmit').prop('disabled', false).text('Save');
+
+                // reload tabel
+                loadData(true);
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                let msg = 'Terjadi kesalahan.';
+
+                if (xhr.status === 422) {
+                    const errors = xhr.responseJSON.errors;
+                    msg = Object.values(errors).map(e => e.join(', ')).join('\n');
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: msg
+                });
+
+                $('#btnSubmit').prop('disabled', false).text('Save');
+            }
+        });
+    });
+
+    // === Delete Data ===
     $(document).on('click', '.delete-data', function(e) {
         e.preventDefault();
 
         const id = $(this).data('id');
-        const row = $(this).closest('tr'); // untuk hapus baris dari tabel
+        const row = $(this).closest('tr');
 
         Swal.fire({
             title: 'Yakin ingin menghapus?',
-            text: "Data department ini akan dihapus permanen!",
+            text: 'Data department ini akan dihapus permanen!',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#6c757d',
             confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
+            cancelButtonText: 'Cancel'
+        }).then(result => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/department/${id}`,
+                    url: `/department/delete/${id}`,
                     type: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
+                    data: { _token: '{{ csrf_token() }}' },
                     success: function(res) {
-                        if (res.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Terhapus!',
-                                text: res.message,
-                                timer: 1500,
-                                showConfirmButton: false
-                            });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Terhapus!',
+                            text: res.message ?? 'Data berhasil dihapus.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
 
-                            // hapus baris dari tabel tanpa reload
-                            row.fadeOut(400, function() {
-                                $(this).remove();
-                            });
-                        }
+                        row.fadeOut(400, () => $(this).remove());
                     },
-                    error: function(xhr) {
+                    error: function() {
                         Swal.fire({
                             icon: 'error',
                             title: 'Gagal!',
@@ -287,7 +306,6 @@
             }
         });
     });
-
-
 </script>
+
 @endpush
