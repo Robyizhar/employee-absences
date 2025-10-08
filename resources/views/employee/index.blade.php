@@ -33,36 +33,21 @@
             <div class="card">
                 <div class="card">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-baseline mb-2">
-                            <h6 class="card-title mb-0">Projects</h6>
-                            <div class="dropdown mb-2">
-                            <button class="btn p-0" type="button" id="dropdownMenuButton7" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton7">
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="eye" class="icon-sm me-2"></i> <span class="">View</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="edit-2" class="icon-sm me-2"></i> <span class="">Edit</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="trash" class="icon-sm me-2"></i> <span class="">Delete</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="printer" class="icon-sm me-2"></i> <span class="">Print</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="download" class="icon-sm me-2"></i> <span class="">Download</span></a>
-                            </div>
-                            </div>
-                        </div>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" id="dTable">
                                 <thead>
                                     <tr>
                                         <th class="pt-0">ID</th>
-                                        <th class="pt-0">Nama</th>
-                                        <th class="pt-0">Kode Karyawan</th>
-                                        <th class="pt-0">Departemen</th>
-                                        <th class="pt-0">Perusahaan</th>
-                                        <th class="pt-0">Aksi</th>
+                                        <th class="pt-0">Name</th>
+                                        <th class="pt-0">Employee Code</th>
+                                        <th class="pt-0">Department</th>
+                                        <th class="pt-0">Company</th>
+                                        <th class="pt-0">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="pt-0" colspan="5">Data Kosong</td>
+                                        <td class="pt-0" colspan="5">Empty Data</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -93,24 +78,24 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Nama</label>
+                            <label class="form-label">Name</label>
                             <input type="text" id="employee_name" class="form-control" readonly>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Kode Karyawan</label>
+                            <label class="form-label">Employee Code</label>
                             <input type="text" id="employee_code" class="form-control" readonly>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Perusahaan</label>
+                            <label class="form-label">Company</label>
                             <input type="text" id="company_name" class="form-control" readonly>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Departemen</label>
+                            <label class="form-label">Department</label>
                             <select name="department_id" id="department_id" class="form-select" required>
-                                <option value="">-- Pilih Departemen --</option>
+                                <option value="">-- Select Department --</option>
                                 @foreach($departments as $dept)
                                     <option value="{{ $dept->id }}">{{ $dept->name }}</option>
                                 @endforeach
@@ -121,7 +106,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Perubahan</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </form>
@@ -194,13 +179,22 @@
                 console.log(res);
                 btn.prop('disabled', false).html('<i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Refresh Data');
                 feather.replace(); // refresh icon feather
+                showLoader();
+
                 setTimeout(function() {
                     lastId = null;
                     loadEmployees();
-                }, 3000);
+                }, 10000);
+                setTimeout(function() {
+                    hideLoader();
+                }, 11000);
             },
             error: function() {
-                alert('Gagal refresh data!');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed!',
+                    text: 'Failed to refresh data!'
+                });
                 btn.prop('disabled', false).html('<i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Refresh Data');
                 feather.replace();
             }
@@ -240,7 +234,7 @@
                 if (res.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Berhasil!',
+                        title: 'Success!',
                         text: res.message,
                         timer: 1500,
                         showConfirmButton: false
@@ -254,7 +248,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Gagal!',
-                    text: 'Terjadi kesalahan saat menyimpan perubahan.'
+                    text: 'An error occurred while saving changes.'
                 });
             }
         });

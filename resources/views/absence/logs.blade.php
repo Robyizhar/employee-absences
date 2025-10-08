@@ -7,15 +7,7 @@
         <h4 class="mb-3 mb-md-0">Absence Page</h4>
         </div>
         <div class="d-flex align-items-center flex-wrap text-nowrap">
-            {{-- <div class="input-group date datepicker wd-200 me-2 mb-2 mb-md-0" id="dashboardDate">
-                <span class="input-group-text input-group-addon bg-transparent border-primary"><i data-feather="calendar" class=" text-primary"></i></span>
-                <input type="text" class="form-control border-primary bg-transparent">
-            </div>
-            <button type="button" class="btn btn-outline-primary btn-icon-text me-2 mb-2 mb-md-0">
-                <i class="btn-icon-prepend" data-feather="printer"></i>
-                Print
-            </button> --}}
-            <button type="button" class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0  me-2">
+            <button type="button" class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0  me-2 maintenence">
                 <i class="btn-icon-prepend" data-feather="download-cloud"></i>
                 Download Report
             </button>
@@ -30,35 +22,20 @@
             <div class="card">
                 <div class="card">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-baseline mb-2">
-                            <h6 class="card-title mb-0">Projects</h6>
-                            <div class="dropdown mb-2">
-                            <button class="btn p-0" type="button" id="dropdownMenuButton7" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton7">
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="eye" class="icon-sm me-2"></i> <span class="">View</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="edit-2" class="icon-sm me-2"></i> <span class="">Edit</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="trash" class="icon-sm me-2"></i> <span class="">Delete</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="printer" class="icon-sm me-2"></i> <span class="">Print</span></a>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="download" class="icon-sm me-2"></i> <span class="">Download</span></a>
-                            </div>
-                            </div>
-                        </div>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" id="dTable">
                                 <thead>
                                     <tr>
-                                        <th class="pt-0">ID</th>
-                                        <th class="pt-0">Nama</th>
-                                        <th class="pt-0">Scan Time</th>
-                                        <th class="pt-0">Status</th>
-                                        <th class="pt-0">Mesin</th>
+                                    <th class="pt-0">ID</th>
+                                    <th class="pt-0">Name</th>
+                                    <th class="pt-0">Scan Time</th>
+                                    <th class="pt-0">Status</th>
+                                    <th class="pt-0">Machine</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <!-- <tr>
-                                        <td class="pt-0" colspan="5">Data Kosong</td>
+                                        <td class="pt-0" colspan="5">Empty Data</td>
                                     </tr> -->
                                 </tbody>
                             </table>

@@ -23,9 +23,9 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Nama</th>
+                                    <th>Name</th>
                                     <th>Permissions</th>
-                                    <th>Aksi</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>

@@ -19,7 +19,7 @@
                                 <thead>
                                     <tr>
                                         <th class="pt-0">ID</th>
-                                        <th class="pt-0">Nama</th>
+                                        <th class="pt-0">Name</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>

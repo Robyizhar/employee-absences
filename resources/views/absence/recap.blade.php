@@ -69,13 +69,13 @@
         <table class="table table-striped" id="rekapTable">
             <thead>
                 <tr>
-                    <th>Tanggal</th>
-                    <th>Departemen</th>
-                    <th>Karyawan</th>
-                    <th>Jam Masuk</th>
-                    <th>Jam Pulang</th>
-                    <th>Terlambat</th>
-                    <th>Pulang Cepat</th>
+                    <th>Date</th>
+                    <th>Department</th>
+                    <th>Employee</th>
+                    <th>Check-in Time</th>
+                    <th>Closing Time</th>
+                    <th>Late</th>
+                    <th>Leaving Early</th>
                 </tr>
             </thead>
             <tbody></tbody>

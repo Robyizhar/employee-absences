@@ -2,12 +2,12 @@
     <thead>
         <tr>
             <th>No</th>
-            <th>Tanggal</th>
-            <th>Nama Karyawan</th>
-            <th>Departemen</th>
-            <th>Jam Scan</th>
+            <th>Date</th>
+            <th>Employee Name</th>
+            <th>Department</th>
+            <th>Clock Scan</th>
             <th>Status</th>
-            <th>Mesin</th>
+            <th>Machine</th>
         </tr>
     </thead>
     <tbody>
