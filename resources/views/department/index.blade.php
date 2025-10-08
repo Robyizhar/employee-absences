@@ -144,11 +144,11 @@
                                 data-code="${user.code}"
                                 data-start_time="${user.start_time}"
                                 data-end_time="${user.end_time}">
-                                <i data-feather="edit"></i>
+                                <i data-feather="edit-2" width="14" height="14"></i>
                             </button>
                             <button class="btn btn-sm btn-danger delete-data ms-2"
                                 data-id="${user.id}">
-                                <i data-feather="trash-2"></i>
+                                <i data-feather="trash-2" width="14" height="14"></i>
                             </button>
                         </div>
                     </td>

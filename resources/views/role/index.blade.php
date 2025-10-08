@@ -104,8 +104,12 @@ function loadData() {
                 <td>${role.name}</td>
                 <td>${perms}</td>
                 <td>
-                    <button class="btn btn-sm btn-warning btn-edit" data-id="${role.id}">Edit</button>
-                    <button class="btn btn-sm btn-danger btn-delete" data-id="${role.id}">Hapus</button>
+                    <button class="btn btn-sm btn-warning btn-edit" data-id="${role.id}">
+                        <i data-feather="edit-2" width="14" height="14"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-delete" data-id="${role.id}">
+                        <i data-feather="trash-2" width="14" height="14"></i>
+                    </button>
                 </td>
             </tr>`;
         });
