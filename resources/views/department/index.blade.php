@@ -270,7 +270,7 @@
         const row = $(this).closest('tr');
 
         Swal.fire({
-            title: 'Yakin ingin menghapus?',
+            title: 'Are you sure you want to delete??',
             text: 'Data department ini akan dihapus permanen!',
             icon: 'warning',
             showCancelButton: true,

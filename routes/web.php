@@ -10,6 +10,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
@@ -49,7 +50,6 @@ Route::middleware('auth')->group(function () {
     Route::prefix('permission')->group(function () {
         Route::get('/', [PermissionController::class, 'index'])->name('permission');
         Route::get('/list', [PermissionController::class, 'list']);
-        // Route::put('/{permission}', [PermissionController::class, 'update'])->name('employee.update');
     });
 
     Route::prefix('role')->group(function () {
@@ -59,6 +59,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/{role}', [RoleController::class, 'show']);
         Route::put('/{role}', [RoleController::class, 'update']);
         Route::delete('/{role}', [RoleController::class, 'destroy']);
+    });
+
+    Route::prefix('user')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('user');
+        Route::get('/list', [UserController::class, 'list']);
+        Route::post('/store', [UserController::class, 'store']);
+        Route::post('/update/{id}', [UserController::class, 'update']);
+        Route::delete('/delete/{id}', [UserController::class, 'destroy']);
     });
 
 });

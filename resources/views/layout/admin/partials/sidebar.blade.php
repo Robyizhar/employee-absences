@@ -71,7 +71,7 @@
                 <div class="collapse" id="settings">
                     <ul class="nav sub-menu">
                         <li class="nav-item ">
-                            <a href="#" class="nav-link">Users</a>
+                            <a href="{{ url('user') }}" class="nav-link {{ Request::segment(1) == 'user' ? 'active' : '' }}">User</a>
                         </li>
                         <li class="nav-item ">
                             <a href="{{ url('role') }}" class="nav-link {{ Request::segment(1) == 'role' ? 'active' : '' }}">Role</a>

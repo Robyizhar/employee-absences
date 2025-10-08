@@ -115,6 +115,7 @@ function loadData() {
         });
 
         $('#dTable tbody').append(rows);
+        feather.replace();
 
         if (res.data.length > 0) {
             lastId = res.data[res.data.length - 1].id;
@@ -180,7 +181,7 @@ $('#roleForm').submit(function(e) {
             Swal.fire({
                 icon: 'error',
                 title: 'Gagal!',
-                text: 'Terjadi kesalahan saat menyimpan perubahan.'
+                text: 'An error occurred while saving changes.'
             });
         }
     });
@@ -230,8 +231,8 @@ $(document).on('click', '.btn-edit', function() {
 $(document).on('click', '.btn-delete', function() {
     let id = $(this).data('id');
     Swal.fire({
-        title: 'Yakin ingin menghapus?',
-        text: "Data ini akan dihapus permanen!",
+        title: 'Are you sure you want to delete??',
+        text: "This data will be permanently deleted!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
