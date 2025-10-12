@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use App\Jobs\StoreFingerLogJob;
 use App\Models\Company;
 use App\Models\Employee;
-use App\Services\FingerspotService; // pastikan sesuai lokasi servicenya
+use App\Repositories\FingerspotRepository;
 use Illuminate\Support\Facades\Log;
 
 class SyncFingerspotUserCommand extends Command
@@ -23,7 +23,7 @@ class SyncFingerspotUserCommand extends Command
 
     protected $fingerspot;
 
-    public function __construct(FingerspotService $fingerspot)
+    public function __construct(FingerspotRepository $fingerspot)
     {
         parent::__construct();
         $this->fingerspot = $fingerspot;
@@ -32,39 +32,23 @@ class SyncFingerspotUserCommand extends Command
     public function handle()
     {
         try {
-            // Misal ambil data dari API fingerspot
-            $data = $this->fingerspot->getUserIdList(); // sesuaikan dengan function-mu
+            $company_id = auth()->user()->company_id ?? null;
+            $query = Company::select('code');
 
-            // Log job
-            StoreFingerLogJob::dispatch('fingerspot/get_userid_list.log', $data);
+            if (!empty($company_id))
+                $query->where('id', $company_id);
 
-            $company = \App\Models\Company::select('id', 'code')
-                ->where('code', $data['cloud_id'])
-                ->first();
+            $codes = $query
+                ->where('is_active', true)
+                ->pluck('code')->toArray();
 
-            if (!$company) {
-                Log::warning("Company not found for cloud_id: " . $data['cloud_id']);
-                return;
+            foreach ($codes as $key => $code) {
+                $params = [ 'cloud_id' => $code ];
+                $result = $this->fingerspot->getAllPin($params);
             }
 
-            foreach ($data['data']['pin_arr'] as $value) {
-                $employee = \App\Models\Employee::firstOrCreate(
-                    [
-                        'employee_code' => $value,
-                        'company_id' => $company->id,
-                    ],
-                    [
-                        'is_active' => false,
-                    ]
-                );
-
-                $this->fingerspot->getUserInfo([
-                    'cloud_id' => $company->code,
-                    'pin'      => $employee->employee_code,
-                ]);
-            }
-
-            $this->info('Fingerspot user sync completed successfully.');
+            // \Log::info($codes);
+            return response()->json($codes, 200);
 
         } catch (\Throwable $e) {
             Log::error('Fingerspot Sync Error: ' . $e->getMessage());
